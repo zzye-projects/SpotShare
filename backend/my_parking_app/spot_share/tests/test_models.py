@@ -9,14 +9,14 @@ class VehicleModelTest(TestCase):
         renter_group, created = Group.objects.get_or_create(name='Renter')
 
         cls.renter_user = User.objects.create(
-            username='RenterUser1', 
+            username='RenterUser', 
             password='RU1@123!'
         )
-        cls.user1.groups.add(renter_group)
+        cls.renter_user.groups.add(renter_group)
 
     def test_vehicle_creation(self):
         vehicle1 = Vehicle.objects.create(
-            owner=self.user1, 
+            owner=self.renter_user, 
             make='make1',
             model='model1',
             colour='colour1',
