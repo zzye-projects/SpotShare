@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Vehicle
+from .models import *
 from django.contrib.auth.models import User, Group
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -14,12 +14,17 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'groups']
 
-class VehicleSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(read_only=True)
-    owner_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        write_only=True)
-    
+class AddressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Vehicle
-        fields = '__all__'
+        model = Address
+        fields = ['id', 'street', 'street_no', 'city', 'state', 'postal_code', 'country']
+
+# class VehicleSerializer(serializers.ModelSerializer):
+#     owner = UserSerializer(read_only=True)
+#     owner_id = serializers.PrimaryKeyRelatedField(
+#         queryset=User.objects.all(),
+#         write_only=True)
+    
+#     class Meta:
+#         model = Vehicle
+#         fields = '__all__'

@@ -51,6 +51,13 @@ class VehicleModelTest(TestCase):
 class AddressModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.staff_user = User.objects.create_user(
+            username='StaffUser', 
+            password='StaffUser@123!'
+        )
+        group, created = Group.objects.get_or_create(name='Staff')
+        cls.staff_user.groups.add(group)
+        
         cls.address = Address.objects.create(
             street = 'street1',
             street_no = 1, 
@@ -59,6 +66,7 @@ class AddressModelTest(TestCase):
             postal_code = 'postal_code1',
             country = 'country1',
         )
+        cls.address.add_user(cls.staff_user)
 
     def test_address_creation(self):
         self.assertEqual(self.address.street, 'street1')
@@ -67,6 +75,17 @@ class AddressModelTest(TestCase):
         self.assertEqual(self.address.state, 'state1')
         self.assertEqual(self.address.postal_code, 'postal_code1')
         self.assertEqual(self.address.country, 'country1')
+        self.assertIn(self.staff_user, self.address.users.all())
+
+    def test_fail_add_user(self):
+        user = User.objects.create_user(
+            username='User', 
+            password='User@123!'
+        )
+        with self.assertRaises(ValidationError) as context:
+            self.address.add_user(user)
+        self.assertIn(f'{user.username} is not Staff user. Only staff can be associated to an address.',
+                      str(context.exception))
 
 class ParkingModelTest(TestCase):
     @classmethod

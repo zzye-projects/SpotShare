@@ -37,8 +37,14 @@ class Address(models.Model):
     street_no = models.SmallIntegerField()
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
+    postal_code = models.CharField(max_length=20, unique=True)
     country = models.CharField(max_length=100)
+    users = models.ManyToManyField(User, related_name='addresses')
+
+    def add_user(self, user):        
+        if not user.groups.filter(name='Staff').exists():
+            raise ValidationError(f'{user.username} is not Staff user. Only staff can be associated to an address.')
+        self.users.add(user)
 
     def __str__(self):
         return f'{self.street_no} {self.street}, {self.city}, {self.state} {self.postal_code}, {self.country}'
