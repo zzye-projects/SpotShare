@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Vehicle)
 admin.site.register(Address)
 admin.site.register(Parking)
+admin.site.register(Lease)
