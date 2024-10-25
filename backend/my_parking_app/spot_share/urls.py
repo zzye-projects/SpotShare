@@ -8,5 +8,6 @@ router.register(r'address', AddressViewSet, basename='address')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('address/<int:pk>/add_user/', AddressViewSet.as_view({'post': 'add_user_to_address'}), name='add-user-to-address'),
+    path('address/<int:pk>/add_user/', AddressViewSet.as_view({'post': 'add_user'}), name='add-user'),
+    path('address/<int:pk>/remove_user/', AddressViewSet.as_view({'delete': 'remove_user'}), name='remove-user'),
 ]

@@ -22,16 +22,26 @@ class AddressViewSet(viewsets.ModelViewSet):
     }
     ordering_fields = ['street', 'city', 'state', 'postal_code', 'country']
 
-    def add_user_to_address(self, request, pk=None):
+    def change_user(self, request, change_type, pk):
         address = get_object_or_404(Address, pk=pk)
-        user = request.user
-        add_users = request.data.get('users')
+        users = request.data.get('users')
 
-        if not add_users:
-            return response.Response({'message':'No users to add.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not users:
+            return response.Response({'message':f'No users to {change_type}.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        for user_pk in add_users:
+        for user_pk in users:
             user = get_object_or_404(User, pk=user_pk)
-            address.add_user(user)
+            if change_type == 'add':
+                address.add_user(user)
+            else:
+                address.users.remove(user) 
 
-        return response.Response({'message':'Users added to the address.'}, status=status.HTTP_200_OK)
+        status_code = status.HTTP_200_OK if change_type == 'add' else status.HTTP_204_NO_CONTENT
+        message = 'Users added to address' if change_type == 'add' else 'Users removed from address'
+        return response.Response({'message': message}, status=status_code)
+    
+    def add_user(self, request, pk=None):
+        return self.change_user(request, 'add', pk)
+    
+    def remove_user(self, request, pk=None):
+        return self.change_user(request, 'remove', pk)

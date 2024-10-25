@@ -49,15 +49,6 @@ class AddressTestCase(APITestCase):
             postal_code = 'postal_code2',
             country = 'country2',
         )
-
-        cls.address3_payload = {
-            'street': 'street3',
-            'street_no': 3, 
-            'city': 'city3',
-            'state': 'state3',
-            'postal_code': 'postal_code3',
-            'country': 'country3',
-        }
     
     def test_list_addresses(self):
         serializer = AddressSerializer(Address.objects.all(), many=True)
@@ -78,9 +69,17 @@ class AddressTestCase(APITestCase):
             username='SuperUser', 
             password='SuperUser@123!'
         )
+        payload = {
+            'street': 'street3',
+            'street_no': 3, 
+            'city': 'city3',
+            'state': 'state3',
+            'postal_code': 'postal_code3',
+            'country': 'country3',
+        }
         response = self.client.post(
             reverse('address-list'), 
-            data=self.address3_payload, 
+            data=payload, 
             format='json'
         )
         self.assertEqual(response.status_code, 201)
@@ -99,151 +98,162 @@ class AddressTestCase(APITestCase):
         )
         response = self.client.post(
             reverse('address-list'), 
-            data=self.address3_payload, 
+            data={}, 
             format='json'
         )
         self.assertEqual(response.status_code, 403)
 
-    def test_add_user_to_address(self):
+    def test_put_address(self):
+        self.client.login(
+            username='SuperUser', 
+            password='SuperUser@123!'
+        )
+        payload = {
+            'street': 'street11',
+            'street_no': 11, 
+            'city': 'city11',
+            'state': 'state11',
+            'postal_code': 'postal_code11',
+            'country': 'country11',
+        }
+        response = self.client.put(
+            reverse('address-detail', kwargs={'pk': self.address1.pk}), 
+            data=payload, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        address = get_object_or_404(Address, pk=self.address1.pk)
+        self.assertEqual(address.street, 'street11')
+        self.assertEqual(address.street_no, 11)
+        self.assertEqual(address.city, 'city11')
+        self.assertEqual(address.state, 'state11')
+        self.assertEqual(address.postal_code, 'postal_code11')
+        self.assertEqual(address.country, 'country11')
+
+    def test_fail_auth_put_address(self):
+        self.client.login(
+            username='StaffUser', 
+            password='StaffUser@123!'
+        )
+        response = self.client.put(
+            reverse('address-detail', kwargs={'pk': self.address1.pk}), 
+            data={}, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_patch_address(self):
+        self.client.login(
+            username='SuperUser', 
+            password='SuperUser@123!'
+        )
+        payload = {
+            'street': 'street11',
+            'street_no': 11
+        }
+        response = self.client.patch(
+            reverse('address-detail', kwargs={'pk': self.address1.pk}), 
+            data=payload, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        address = get_object_or_404(Address, pk=self.address1.pk)
+        self.assertEqual(address.street, 'street11')
+        self.assertEqual(address.street_no, 11)
+        self.assertEqual(address.city, 'city1')
+        self.assertEqual(address.state, 'state1')
+        self.assertEqual(address.postal_code, 'postal_code1')
+        self.assertEqual(address.country, 'country1')
+
+    def test_fail_auth_patch_address(self):
+        self.client.login(
+            username='StaffUser', 
+            password='StaffUser@123!'
+        )
+        response = self.client.patch(
+            reverse('address-detail', kwargs={'pk': self.address1.pk}), 
+            data={}, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_address(self):
+        self.client.login(
+            username='SuperUser', 
+            password='SuperUser@123!'
+        )
+        response = self.client.delete(
+            reverse('address-detail', kwargs={'pk': self.address1.pk}), 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Address.objects.filter(pk=self.address1.pk).exists())
+
+    def test_fail_auth_delete_address(self):
+        self.client.login(
+            username='StaffUser', 
+            password='StaffUser@123!'
+        )
+        response = self.client.delete(
+            reverse('address-detail', kwargs={'pk': self.address1.pk}), 
+            data={}, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)  
+        self.assertTrue(Address.objects.filter(pk=self.address1.pk).exists())
+      
+    def test_add_user(self):
         self.client.login(
             username='SuperUser', 
             password='SuperUser@123!'
         )
         response = self.client.post(
-            reverse('add-user-to-address', kwargs={'pk': self.address2.pk}), 
-            data={
-                'users': [self.staff_user1.pk, self.staff_user2.pk]
-            }, 
+            reverse('add-user', kwargs={'pk': self.address2.pk}), 
+            data={'users': [self.staff_user1.pk, self.staff_user2.pk]},
             format='json'
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(self.address2.users.all()), 2)
         self.assertTrue(self.address2.users.filter(pk=self.staff_user1.pk).exists())
         self.assertTrue(self.address2.users.filter(pk=self.staff_user2.pk).exists())
+    
+    def test_fail_auth_add_user(self):
+        self.client.login(
+            username='StaffUser', 
+            password='StaffUser@123!'
+        )
+        response = self.client.post(
+            reverse('add-user', kwargs={'pk': self.address2.pk}), 
+            data={'users': [self.staff_user1.pk, self.staff_user2.pk]}, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(len(self.address2.users.all()), 0)
 
-    # def test_fail_add_user_to_address(self):
-    #     self.client.login(
-    #         username='SuperUser', 
-    #         password='SuperUser@123!'
-    #     )
-    #     response = self.client.post(
-    #         reverse('add-user-to-address', kwargs={'pk': self.address2.pk}), 
-    #         data={'users': [self.customer_user.pk]}, 
-    #         format='json'
-    #     )
-    #     print(response)
+    def test_remove_user(self):
+        self.client.login(
+            username='SuperUser', 
+            password='SuperUser@123!'
+        )
+        response = self.client.delete(
+            reverse('remove-user', kwargs={'pk': self.address1.pk}), 
+            data={'users': [self.staff_user1.pk, self.staff_user2.pk]},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(len(self.address1.users.all()), 0)
+    
+    def test_fail_auth_remove_user(self):
+        self.client.login(
+            username='StaffUser', 
+            password='StaffUser@123!'
+        )
+        response = self.client.delete(
+            reverse('remove-user', kwargs={'pk': self.address1.pk}), 
+            data={'users': [self.staff_user1.pk, self.staff_user2.pk]}, 
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(len(self.address1.users.all()), 1)
 
 
-    # def test_post_category(self):
-    #     self.client.login(
-    #         username='ManagerUser', 
-    #         password='ManagerUser@123!'
-    #     )
-    #     payload = {
-    #         'slug': 'category3',
-    #         'title': 'Category3'
-    #     }
-
-    #     response = self.client.post(
-    #         reverse('category-list'), 
-    #         data=payload, 
-    #         format='json'
-    #     )
-    #     category = get_object_or_404(Category, title='Category3')
-        
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertEqual(category.slug, 'category3')
-    #     self.assertEqual(category.title, 'Category3')
-    #     self.assertEqual(len(Category.objects.all()), 3)
-
-    # def test_filter_category(self):
-    #     self.client.login(
-    #         username='CustomerUser', 
-    #         password='CustomerUser@123!'
-    #     )
-
-    #     serializer = CategorySerializer(self.category1)
-    #     response = self.client.get(reverse('category-list'), {'title__icontains':'1'})
-       
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(len(response.data['results']), 1)
-    #     self.assertEqual(response.data['results'][0], serializer.data)
-
-    # def test_order_category(self):
-    #     self.client.login(
-    #         username='CustomerUser', 
-    #         password='CustomerUser@123!'
-    #     )
-        
-    #     serializer1 = CategorySerializer(self.category1)
-    #     serializer2 = CategorySerializer(self.category2)
-
-    #     response = self.client.get(reverse('category-list'), {'ordering':'-slug'})
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response.data['results'][0], serializer2.data)
-    #     self.assertEqual(response.data['results'][1], serializer1.data)
-
-    # def test_paginate_category(self):
-    #     self.client.login(
-    #         username='CustomerUser', 
-    #         password='CustomerUser@123!'
-    #     )
-
-    #     serializer = CategorySerializer(self.category2)
-    #     response = self.client.get(reverse('category-list'), {'page_size':'1', 'page': 2})
-        
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(len(response.data['results']), 1)
-    #     self.assertEqual(response.data['results'][0], serializer.data)
-
-    # def test_put_category(self):
-    #     self.client.login(
-    #         username='ManagerUser', 
-    #         password='ManagerUser@123!'
-    #     )
-    #     payload = {
-    #         'slug' : 'category11',
-    #         'title' : 'Category11'
-    #     }
-    #     response = self.client.put(
-    #         reverse('category-detail',
-    #         kwargs={'pk': self.category1.pk}), 
-    #         data=payload, format='json'
-    #     )
-    #     category = get_object_or_404(Category, pk=self.category1.pk)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(category.title, 'Category11')
-    #     self.assertEqual(category.slug, 'category11')
-    #     self.assertEqual(len(Category.objects.all()), 2)
-
-    # def test_patch_category(self):
-    #     self.client.login(
-    #         username='ManagerUser', 
-    #         password='ManagerUser@123!'
-    #     )
-    #     payload = {
-    #         'slug' : 'category11',
-    #     }
-    #     response = self.client.patch(
-    #         reverse('category-detail',
-    #         kwargs={'pk': self.category1.pk}), 
-    #         data=payload, format='json'
-    #     )
-    #     category = get_object_or_404(Category, pk=self.category1.pk)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(category.title, 'Category1')
-    #     self.assertEqual(category.slug, 'category11')
-    #     self.assertEqual(len(Category.objects.all()), 2)
-
-    # def test_delete_category(self):
-    #     self.client.login(
-    #         username='ManagerUser', 
-    #         password='ManagerUser@123!'
-    #     )
-    #     response = self.client.delete(
-    #         reverse('category-detail',
-    #         kwargs={'pk': self.category1.pk})
-    #     )
-    #     self.assertEqual(response.status_code, 204)
-    #     self.assertEqual(len(Category.objects.all()), 1)
-    #     self.assertEqual(len(Category.objects.filter(pk=self.category1.pk)), 0)
