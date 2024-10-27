@@ -19,6 +19,15 @@ class AddressSerializer(serializers.ModelSerializer):
         model = Address
         fields = ['id', 'street', 'street_no', 'city', 'state', 'postal_code', 'country']
 
+class ParkingSerializer(serializers.ModelSerializer):
+    lessor = serializers.PrimaryKeyRelatedField(
+        queryset = User.objects.all(),
+        many=False)
+
+    class Meta:
+        model = Parking
+        fields =  '__all__'
+
 # class VehicleSerializer(serializers.ModelSerializer):
 #     owner = UserSerializer(read_only=True)
 #     owner_id = serializers.PrimaryKeyRelatedField(

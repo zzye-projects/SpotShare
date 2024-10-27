@@ -7,20 +7,10 @@ from datetime import timedelta
 class VehicleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        lessor_group, created = Group.objects.get_or_create(name='Lessor')
-        tenant_group, created = Group.objects.get_or_create(name='Tenant')
-
         cls.tenant_user = User.objects.create(
             username='TenantUser', 
             password='TU1@123!'
         )
-        cls.tenant_user.groups.add(tenant_group)
-
-        cls.lessor_user = User.objects.create(
-            username='LessorUser', 
-            password='LU1@123!'
-        )
-        cls.lessor_user.groups.add(lessor_group)
 
     def test_vehicle_creation(self):
         vehicle = Vehicle.objects.create(
@@ -35,18 +25,6 @@ class VehicleModelTest(TestCase):
         self.assertEqual(vehicle.model, 'model1')
         self.assertEqual(vehicle.colour, 'colour1')
         self.assertEqual(vehicle.license_plate, 'license1')
-
-    def test_invalid_owner(self):
-        with self.assertRaises(ValidationError) as context:
-            Vehicle.objects.create(
-            owner=self.lessor_user, 
-            make='make1',
-            model='model1',
-            colour='colour1',
-            license_plate='license1'
-        )
-        self.assertIn('Vehicle owner must be a parking tenant.', 
-                      str(context.exception))
 
 class AddressModelTest(TestCase):
     @classmethod
@@ -66,7 +44,7 @@ class AddressModelTest(TestCase):
             postal_code = 'postal_code1',
             country = 'country1',
         )
-        cls.address.add_user(cls.staff_user)
+        cls.address.add_staff_user(cls.staff_user)
 
     def test_address_creation(self):
         self.assertEqual(self.address.street, 'street1')
@@ -75,7 +53,7 @@ class AddressModelTest(TestCase):
         self.assertEqual(self.address.state, 'state1')
         self.assertEqual(self.address.postal_code, 'postal_code1')
         self.assertEqual(self.address.country, 'country1')
-        self.assertIn(self.staff_user, self.address.users.all())
+        self.assertIn(self.staff_user, self.address.staff_users.all())
 
     def test_fail_add_user(self):
         user = User.objects.create_user(
@@ -83,7 +61,7 @@ class AddressModelTest(TestCase):
             password='User@123!'
         )
         with self.assertRaises(ValidationError) as context:
-            self.address.add_user(user)
+            self.address.add_staff_user(user)
         self.assertIn(f'{user.username} is not Staff user. Only staff can be associated to an address.',
                       str(context.exception))
 
@@ -98,21 +76,10 @@ class ParkingModelTest(TestCase):
             postal_code = 'postal_code1',
             country = 'country1',
         )
-
-        lessor_group, created = Group.objects.get_or_create(name='Lessor')
-        tenant_group, created = Group.objects.get_or_create(name='Tenant')
-
-        cls.tenant_user = User.objects.create(
-            username='TenantUser', 
-            password='TU1@123!'
-        )
-        cls.tenant_user.groups.add(tenant_group)
-
         cls.lessor_user = User.objects.create(
             username='LessorUser', 
             password='LU1@123!'
         )
-        cls.lessor_user.groups.add(lessor_group)
 
     def test_parking_creation(self):
         today = timezone.now().date()
@@ -127,14 +94,14 @@ class ParkingModelTest(TestCase):
         self.assertEqual(parking.parking_unit, 'P1 U1')
         self.assertEqual(parking.available_start, today)
 
-    def test_invalid_lessor(self):
-        with self.assertRaises(ValidationError) as context:
+    def test_invalid_address(self):
+        with self.assertRaises(ValueError) as context:
             Parking.objects.create(
-            lessor=self.tenant_user,
-            address=self.address,
+            lessor=self.lessor_user,
+            address='INVALID ADDRESS',
             parking_unit='P1 U1',
-            available_start=timezone.now().date()),
-        self.assertIn('Lessor must be a user who belongs to the Lessor group.',
+            available_start=timezone.now().date())
+        self.assertIn('"Parking.address" must be a "Address" instance',
                       str(context.exception))
         
     def test_invalid_start_date(self):

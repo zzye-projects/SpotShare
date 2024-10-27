@@ -20,11 +20,6 @@ class Vehicle(models.Model):
         unique=True,
         db_index=True)
     
-    def clean(self):
-        super().clean()
-        if not self.owner.groups.filter(name='Tenant').exists():
-            raise ValidationError('Vehicle owner must be a parking tenant.')
-    
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
@@ -39,17 +34,22 @@ class Address(models.Model):
     state = models.CharField(max_length=100)
     postal_code = models.CharField(max_length=20, unique=True)
     country = models.CharField(max_length=100)
-    users = models.ManyToManyField(User, related_name='addresses')
+    staff_users = models.ManyToManyField(User, related_name='addresses')
 
-    def add_user(self, user):        
+    def add_staff_user(self, user):        
         if not user.groups.filter(name='Staff').exists():
             raise ValidationError(f'{user.username} is not Staff user. Only staff can be associated to an address.')
-        self.users.add(user)
+        self.staff_users.add(user)
 
     def __str__(self):
         return f'{self.street_no} {self.street}, {self.city}, {self.state} {self.postal_code}, {self.country}'
 
 class Parking(models.Model):
+    STATUS_CHOICES = [
+        ('DRAFT','Draft'),
+        ('ACTIVE','Active'),
+        ('ARCHIVED', 'Archived')
+    ]
     lessor = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     parking_unit = models.CharField(max_length=50)
@@ -58,12 +58,14 @@ class Parking(models.Model):
         db_index=True, 
         null=True,
         blank=True)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        db_index=True,
+        default='DRAFT')
 
     def clean(self):
         super().clean()
-        
-        if not self.lessor.groups.filter(name='Lessor').exists():
-            raise ValidationError('Lessor must be a user who belongs to the Lessor group.')
         validate_dates(self.available_start, self.available_end)
     
     def save(self, *args, **kwargs):

@@ -6,7 +6,6 @@ from ..models import Address
 from ..serializers import AddressSerializer
 from ..permissions import IsSuperAdminOrGET
 
-
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
@@ -32,16 +31,16 @@ class AddressViewSet(viewsets.ModelViewSet):
         for user_pk in users:
             user = get_object_or_404(User, pk=user_pk)
             if change_type == 'add':
-                address.add_user(user)
+                address.add_staff_user(user)
             else:
-                address.users.remove(user) 
+                address.staff_users.remove(user) 
 
         status_code = status.HTTP_200_OK if change_type == 'add' else status.HTTP_204_NO_CONTENT
         message = 'Users added to address' if change_type == 'add' else 'Users removed from address'
         return response.Response({'message': message}, status=status_code)
     
-    def add_user(self, request, pk=None):
+    def add_staff_user(self, request, pk=None):
         return self.change_user(request, 'add', pk)
     
-    def remove_user(self, request, pk=None):
+    def remove_staff_user(self, request, pk=None):
         return self.change_user(request, 'remove', pk)

@@ -1,4 +1,3 @@
-
 from rest_framework.test import APITestCase
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -39,7 +38,7 @@ class AddressTestCase(APITestCase):
             postal_code = 'postal_code1',
             country = 'country1'
         )
-        cls.address1.add_user(cls.staff_user1)
+        cls.address1.add_staff_user(cls.staff_user1)
 
         cls.address2 = Address.objects.create(
             street = 'street2',
@@ -202,58 +201,58 @@ class AddressTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)  
         self.assertTrue(Address.objects.filter(pk=self.address1.pk).exists())
       
-    def test_add_user(self):
+    def test_add_staff_user(self):
         self.client.login(
             username='SuperUser', 
             password='SuperUser@123!'
         )
         response = self.client.post(
-            reverse('add-user', kwargs={'pk': self.address2.pk}), 
+            reverse('add-staff-user', kwargs={'pk': self.address2.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]},
             format='json'
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(self.address2.users.all()), 2)
-        self.assertTrue(self.address2.users.filter(pk=self.staff_user1.pk).exists())
-        self.assertTrue(self.address2.users.filter(pk=self.staff_user2.pk).exists())
+        self.assertEqual(len(self.address2.staff_users.all()), 2)
+        self.assertTrue(self.address2.staff_users.filter(pk=self.staff_user1.pk).exists())
+        self.assertTrue(self.address2.staff_users.filter(pk=self.staff_user2.pk).exists())
     
-    def test_fail_auth_add_user(self):
+    def test_fail_auth_add_staff_user(self):
         self.client.login(
             username='StaffUser', 
             password='StaffUser@123!'
         )
         response = self.client.post(
-            reverse('add-user', kwargs={'pk': self.address2.pk}), 
+            reverse('add-staff-user', kwargs={'pk': self.address2.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]}, 
             format='json'
         )
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(len(self.address2.users.all()), 0)
+        self.assertEqual(len(self.address2.staff_users.all()), 0)
 
-    def test_remove_user(self):
+    def test_remove_staff_user(self):
         self.client.login(
             username='SuperUser', 
             password='SuperUser@123!'
         )
         response = self.client.delete(
-            reverse('remove-user', kwargs={'pk': self.address1.pk}), 
+            reverse('remove-staff-user', kwargs={'pk': self.address1.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]},
             format='json'
         )
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(len(self.address1.users.all()), 0)
+        self.assertEqual(len(self.address1.staff_users.all()), 0)
     
-    def test_fail_auth_remove_user(self):
+    def test_fail_auth_remove_staff_user(self):
         self.client.login(
             username='StaffUser', 
             password='StaffUser@123!'
         )
         response = self.client.delete(
-            reverse('remove-user', kwargs={'pk': self.address1.pk}), 
+            reverse('remove-staff-user', kwargs={'pk': self.address1.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]}, 
             format='json'
         )
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(len(self.address1.users.all()), 1)
+        self.assertEqual(len(self.address1.staff_users.all()), 1)
 
 
