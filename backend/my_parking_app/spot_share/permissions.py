@@ -6,11 +6,15 @@ class IsSuperAdminOrGET(BasePermission):
         return (view.action in ('list', 'retrieve')) or \
             user.is_superuser or user.is_staff
     
-class IsOwnerStaffAdminSuperOrGETOrPOST(BasePermission):
+class ParkingPermissions(BasePermission):
+    def has_permission(self, request, view):
+        return view.action in ('list', 'retrieve') or \
+            request.user.is_authenticated
     
     def has_object_permission(self, request, view, obj):
         user = request.user
-        return (view.action in ('list', 'retrieve', 'create')) or \
-            obj.lessor == user or user.is_superuser or \
-            user.is_staff or (user.groups.filter(name='Staff').exists() and \
-                              obj.address in user.addresses.all())
+        if view.action in ('destroy', 'partial_update'):
+            return obj.lessor == user or user.is_superuser or user.is_staff or \
+                user.addresses.filter(pk=obj.address.pk).exists()
+        return view.action == 'retrieve'
+        

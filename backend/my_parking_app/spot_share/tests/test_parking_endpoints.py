@@ -91,7 +91,15 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, serializer.data)
 
-    def test_post_parking(self):
+    def test_auth_post_parking(self):
+        response = self.client.post(
+            reverse('parking-list'),
+            data={},
+            format='json')
+        
+        self.assertEqual(response.status_code, 403)
+
+    def test_auth_staff_post_parking(self):
         payload = {
             'lessor': self.lessor_user1.pk,
             'address': self.address2.pk,
@@ -100,6 +108,31 @@ class ParkingTestCase(APITestCase):
             'available_end': self.today + timedelta(days=21),
             'status': 'ACTIVE'
         }
+        self.client.login(
+            username='StaffUser1', 
+            password='StaffUser1@123!'
+        )
+        response = self.client.post(
+            reverse('parking-list'),
+            data=payload,
+            format='json')
+        
+        self.assertEqual(response.status_code, 403)
+
+    def test_post_parking(self):
+        
+        payload = {
+            'lessor': self.lessor_user1.pk,
+            'address': self.address2.pk,
+            'parking_unit': 'P2 U1',
+            'available_start': self.today + timedelta(days=11),
+            'available_end': self.today + timedelta(days=21),
+            'status': 'ACTIVE'
+        }
+        self.client.login(
+            username='LessorUser1', 
+            password='LessorUser1@123!'
+        )
         response = self.client.post(
             reverse('parking-list'),
             data=payload,
@@ -200,37 +233,48 @@ class ParkingTestCase(APITestCase):
             format='json')
         self.assertEqual(response.status_code, 405)
     
+    def test_fail_lessor_remove_parking(self):
+        self.client.login(
+            username='LessorUser1', 
+            password='LessorUser1@123!'
+        )
+        response = self.client.delete(
+            reverse('parking-detail', kwargs={'pk': self.parking2.pk}))
+        
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Parking.objects.filter(pk=self.parking2.pk).exists())
+
     def test_lessor_remove_parking(self):
         self.client.login(
             username='LessorUser1', 
             password='LessorUser1@123!'
         )
-        response1 = self.client.delete(
-            reverse('parking-detail', kwargs={'pk': self.parking2.pk}))
-        
-        self.assertEqual(response1.status_code, 403)
-        self.assertTrue(Parking.objects.filter(pk=self.parking2.pk).exists())
 
-        response2 = self.client.delete(
+        response = self.client.delete(
             reverse('parking-detail', kwargs={'pk': self.parking1.pk}))
         
-        self.assertEqual(response2.status_code, 204)
+        self.assertEqual(response.status_code, 204)
         self.assertFalse(Parking.objects.filter(pk=self.parking1.pk).exists())
 
+    def test_fail_staff_remove_parking(self):
+        self.client.login(
+            username='StaffUser1', 
+            password='StaffUser1@123!'
+        )
+        response = self.client.delete(
+            reverse('parking-detail', kwargs={'pk': self.parking2.pk}))
+        
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Parking.objects.filter(pk=self.parking2.pk).exists())
+    
     def test_staff_remove_parking(self):
         self.client.login(
             username='StaffUser1', 
             password='StaffUser1@123!'
         )
-        response1 = self.client.delete(
-            reverse('parking-detail', kwargs={'pk': self.parking2.pk}))
-        
-        self.assertEqual(response1.status_code, 403)
-        self.assertTrue(Parking.objects.filter(pk=self.parking2.pk).exists())
-
-        response2 = self.client.delete(
+        response = self.client.delete(
             reverse('parking-detail', kwargs={'pk': self.parking1.pk}))
         
-        self.assertEqual(response2.status_code, 204)
+        self.assertEqual(response.status_code, 204)
         self.assertFalse(Parking.objects.filter(pk=self.parking1.pk).exists())
 
