@@ -17,4 +17,10 @@ class ParkingPermissions(BasePermission):
             return obj.lessor == user or user.is_superuser or user.is_staff or \
                 user.addresses.filter(pk=obj.address.pk).exists()
         return view.action == 'retrieve'
-        
+    
+class VehiclePermissions(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if user.groups.filter(name='Staff').exists():
+            return view.action == 'retrieve'
+        return user.is_authenticated

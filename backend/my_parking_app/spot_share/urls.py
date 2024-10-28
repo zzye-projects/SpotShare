@@ -3,10 +3,13 @@ from rest_framework.routers import DefaultRouter
 
 from .views.address_views import AddressViewSet
 from .views.parking_views import ParkingViewSet
+from .views.vehicle_views import VehicleViewSet
+
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'address', AddressViewSet, basename='address')
 router.register(r'parking', ParkingViewSet, basename='parking')
+router.register(r'vehicle', VehicleViewSet, basename='vehicle')
 
 urlpatterns = [
     path('', include(router.urls)),

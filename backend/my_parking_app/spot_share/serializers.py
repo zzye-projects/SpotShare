@@ -28,12 +28,11 @@ class ParkingSerializer(serializers.ModelSerializer):
         model = Parking
         fields =  '__all__'
 
-# class VehicleSerializer(serializers.ModelSerializer):
-#     owner = UserSerializer(read_only=True)
-#     owner_id = serializers.PrimaryKeyRelatedField(
-#         queryset=User.objects.all(),
-#         write_only=True)
+class VehicleSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        many=False)
     
-#     class Meta:
-#         model = Vehicle
-#         fields = '__all__'
+    class Meta:
+        model = Vehicle
+        fields = '__all__'
