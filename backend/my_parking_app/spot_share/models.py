@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 from django.utils import timezone
+from .globals import STATUS_CHOICES, PAYMENT_CHOICES, FREQUENCY_CHOICES
 
 def validate_dates(start_date, end_date):
     if start_date < timezone.now().date():
@@ -63,6 +66,15 @@ class Parking(models.Model):
         choices=STATUS_CHOICES,
         db_index=True,
         default='DRAFT')
+    payment_amount = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
+    payment_frequency=models.CharField(
+        max_length=10,
+        choices=FREQUENCY_CHOICES
+    )
 
     def clean(self):
         super().clean()
@@ -76,21 +88,6 @@ class Parking(models.Model):
         return f'{self.address} - {self.parking_unit}'
 
 class Lease(models.Model):
-    STATUS_CHOICES = [
-        ('DRAFT','Draft'),
-        ('ACTIVE','Active'),
-        ('ARCHIVED', 'Archived')
-    ]
-    FREQUENCY_CHOICES = [
-        ('ANNUALLY','Annually'),
-        ('MONTHLY', 'Monthly'),
-        ('WEEKLY', 'Weekly')
-    ]
-    PAYMENT_CHOICES = [
-        ('CREDIT', 'Credit'),
-        ('DEBIT', 'Pre-Authorized Debit')
-    ]
-    
     parking = models.ForeignKey(Parking, on_delete=models.CASCADE, db_index=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, db_index=True)
     
@@ -104,7 +101,11 @@ class Lease(models.Model):
         choices=STATUS_CHOICES,
         default='DRAFT'
     )
-    
+    payment_amount = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
     payment_frequency=models.CharField(
         max_length=10,
         choices=FREQUENCY_CHOICES

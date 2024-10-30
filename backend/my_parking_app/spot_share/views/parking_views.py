@@ -18,9 +18,11 @@ class ParkingViewSet(viewsets.ModelViewSet):
         'parking_unit': ['exact', 'icontains'],
         'available_start': ['gte'],
         'available_end': ['lte'],
-        'status': ['exact', 'icontains']
+        'status': ['exact', 'icontains'],
+        'payment_amount': ['lte'],
+        'payment_frequency': ['exact']
     }
-    ordering_fields = ['address', 'available_start']
+    ordering_fields = ['address', 'available_start', 'payment_amount']
     
     def create(self, request, *args, **kwargs):
         user = request.user

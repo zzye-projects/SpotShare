@@ -87,12 +87,16 @@ class ParkingModelTest(TestCase):
             lessor=self.lessor_user,
             address=self.address,
             parking_unit='P1 U1',
-            available_start=today)
+            available_start=today,
+            payment_amount = 100,
+            payment_frequency = 'MONTHLY')
         
         self.assertEqual(parking.lessor, self.lessor_user)
         self.assertEqual(parking.address, self.address)
         self.assertEqual(parking.parking_unit, 'P1 U1')
         self.assertEqual(parking.available_start, today)
+        self.assertEqual(parking.payment_amount, 100)
+        self.assertEqual(parking.payment_frequency, 'MONTHLY')
 
     def test_invalid_address(self):
         with self.assertRaises(ValueError) as context:
@@ -165,7 +169,9 @@ class LeaseModelTest(TestCase):
             address=cls.address,
             parking_unit='P1 U1',
             available_start=cls.future_date,
-            available_end=cls.future_date + timedelta(days=30))
+            available_end=cls.future_date + timedelta(days=30),
+            payment_amount=100,
+            payment_frequency='MONTHLY')
 
     def test_lease_creation(self):
         lease = Lease.objects.create(
@@ -175,7 +181,8 @@ class LeaseModelTest(TestCase):
             end_date = self.future_date + timedelta(days=15),
             payment_frequency='ANNUALLY',
             payment_type='CREDIT',
-            payment_details='payment details 1'
+            payment_details='payment details 1',
+            payment_amount=100
         )
 
         self.assertEqual(lease.parking, self.parking)
@@ -186,6 +193,8 @@ class LeaseModelTest(TestCase):
         self.assertEqual(lease.payment_frequency, 'ANNUALLY')
         self.assertEqual(lease.payment_type, 'CREDIT')
         self.assertEqual(lease.payment_details, 'payment details 1')   
+        self.assertEqual(lease.payment_amount, 100)
+
 
     def test_invalid_start(self):
         with self.assertRaises(ValidationError) as context:

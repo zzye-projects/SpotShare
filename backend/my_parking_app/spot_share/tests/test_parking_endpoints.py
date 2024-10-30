@@ -61,14 +61,20 @@ class ParkingTestCase(APITestCase):
             lessor=cls.lessor_user1,
             address=cls.address1,
             parking_unit='P1 U1',
-            available_start=cls.today + timedelta(days=11))
+            available_start=cls.today + timedelta(days=11),
+            payment_amount = 100,
+            payment_frequency = 'MONTHLY'
+        )
         
         cls.parking2 = Parking.objects.create(
             lessor=cls.lessor_user2,
             address=cls.address2,
             parking_unit='P2 U2',
             available_start=cls.today + timedelta(days=12),
-            available_end=cls.today + timedelta(days=22))
+            available_end=cls.today + timedelta(days=22),
+            payment_amount = 200,
+            payment_frequency = 'ANNUALLY'
+        )
         
     def test_list_parking(self):
         response = self.client.get(reverse('parking-list'))
@@ -90,7 +96,7 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, serializer.data)
 
-    def test_auth_post_parking(self):
+    def test_fail_auth_post_parking(self):
         response = self.client.post(
             reverse('parking-list'),
             data={},
@@ -98,14 +104,16 @@ class ParkingTestCase(APITestCase):
         
         self.assertEqual(response.status_code, 403)
 
-    def test_auth_staff_post_parking(self):
+    def test_fail_auth_staff_post_parking(self):
         payload = {
             'lessor': self.lessor_user1.pk,
             'address': self.address2.pk,
             'parking_unit': 'P2 U1',
             'available_start': self.today + timedelta(days=11),
             'available_end': self.today + timedelta(days=21),
-            'status': 'ACTIVE'
+            'status': 'ACTIVE',
+            'payment_amount': 100,
+            'payment_frequency': 'MONTHLY'
         }
         self.client.login(
             username='StaffUser1', 
@@ -126,7 +134,9 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P2 U1',
             'available_start': self.today + timedelta(days=11),
             'available_end': self.today + timedelta(days=21),
-            'status': 'ACTIVE'
+            'status': 'ACTIVE',
+            'payment_amount': 300,
+            'payment_frequency': 'WEEKLY'
         }
         self.client.login(
             username='LessorUser1', 
@@ -144,6 +154,8 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(parking3.available_start, self.today + timedelta(days=11))
         self.assertEqual(parking3.available_end, self.today + timedelta(days=21))
         self.assertEqual(parking3.status, 'DRAFT')
+        self.assertEqual(parking3.payment_amount, 300)
+        self.assertEqual(parking3.payment_frequency, 'WEEKLY')
 
     def test_fail_lessor_patch_parking(self):
         self.client.login(
@@ -167,7 +179,9 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P1 U11',
             'available_start': self.today + timedelta(days=111),
             'available_end': self.today + timedelta(days=211),
-            'status': 'ACTIVE'
+            'status': 'ACTIVE',
+            'payment_amount': 101,
+            'payment_frequency': 'WEEKLY'
         }
         
         response = self.client.patch(
@@ -182,6 +196,8 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(parking1.available_start, self.today + timedelta(days=111))
         self.assertEqual(parking1.available_end, self.today + timedelta(days=211))
         self.assertEqual(parking1.status, 'DRAFT')
+        self.assertEqual(parking1.payment_amount, 101)
+        self.assertEqual(parking1.payment_frequency, 'WEEKLY')
 
     def test_fail_staff_patch_parking(self):
         self.client.login(
@@ -205,7 +221,9 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P1 U111',
             'available_start': self.today + timedelta(days=1111),
             'available_end': self.today + timedelta(days=2111),
-            'status': 'ARCHIVED'
+            'status': 'ARCHIVED',
+            'payment_amount': 102,
+            'payment_frequency': 'ANNUALLY'
         }
         response = self.client.patch(
             reverse('parking-detail', kwargs={'pk':self.parking1.pk}),
@@ -220,6 +238,8 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(parking1.available_start, self.today + timedelta(days=1111))
         self.assertEqual(parking1.available_end, self.today + timedelta(days=2111))
         self.assertEqual(parking1.status, 'ARCHIVED')
+        self.assertEqual(parking1.payment_amount, 102)
+        self.assertEqual(parking1.payment_frequency, 'ANNUALLY')
 
     def test_fail_put_parking(self):
         self.client.login(
