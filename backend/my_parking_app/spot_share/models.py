@@ -88,7 +88,7 @@ class Parking(models.Model):
         return f'{self.address} - {self.parking_unit}'
 
 class Lease(models.Model):
-    parking = models.ForeignKey(Parking, on_delete=models.CASCADE, db_index=True)
+    parking = models.ForeignKey(Parking, on_delete=models.PROTECT, db_index=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, db_index=True)
     
     lessor = models.ForeignKey(

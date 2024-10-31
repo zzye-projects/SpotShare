@@ -38,24 +38,35 @@ class LeaseViewSet(viewsets.ModelViewSet):
         return Lease.objects.filter(Q(lessor=user) | Q(tenant=user))
 
     def create(self, request, *args, **kwargs):
-        data, user = request.data, request.user
-        parking = get_object_or_404(Parking, pk=data['parking'])
-        vehicle = get_object_or_404(Vehicle, pk=data['vehicle'])
+        user = request.user
+        parking = get_object_or_404(Parking, pk=request.data['parking'])
+        vehicle = get_object_or_404(Vehicle, pk=request.data['vehicle'])
         
         if user not in (parking.lessor, vehicle.owner) and \
             not user.addresses.filter(pk=parking.address.pk).exists():
             return response.Response(
-                {'message': 'You have a tenant, lessor, or staff on this lease.'}, 
+                {'message': 'You have to be a tenant, lessor, or staff on this lease.'}, 
                 status=status.HTTP_403_FORBIDDEN)
         
-        data['lessor'] = parking.lessor.pk
-        data['tenant'] = vehicle.owner.pk
+        request.data['lessor'] = parking.lessor
+        request.data['tenant'] = vehicle.owner
 
-        data.pop('lessor_approved', None)
-        data.pop('tenant_approved', None)
-        data.pop('status', None)
+        request.data.pop('lessor_approved', None)
+        request.data.pop('tenant_approved', None)
+        request.data.pop('staff_approved', None)
 
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save(
+            lessor=self.request.data['lessor'],
+            tenant=self.request.data['tenant']
+        )
 
     def retrieve(self, request, *args, **kwargs):
         user = request.user

@@ -253,12 +253,159 @@ class LeaseTestCase(APITestCase):
             reverse('lease-detail', kwargs={'pk':self.lease1.pk}))
         self.assertEqual(response.status_code, 403)
 
-    # all create
-    # def test_tenant_create_lease(self):
-    #     pass
+    def test_tenant_create_lease(self):
+        payload={
+            'parking': self.parking1.pk,
+            'vehicle': self.vehicle1.pk,
+            'start_date': self.today + timedelta(days=11+1),
+            'end_date': self.today + timedelta(days=11+30),
+            'payment_frequency': 'WEEKLY',
+            'payment_type': 'DEBIT',
+            'payment_details': 'payment details 3',
+            'payment_amount': 300
+        }
+        self.client.login(
+            username='TenantUser1', 
+            password='TenantUser1@123!'
+        )
 
-    # def test_staff_create_lease(self):
-    #     pass
+        response = self.client.post(
+            reverse('lease-list'),
+            data=payload,
+            format='json'
+        )
+        lease = get_object_or_404(Lease, payment_details='payment details 3')
+        comparison_pair = [
+            [response.status_code, 201], 
+            [lease.parking, self.parking1], 
+            [lease.vehicle, self.vehicle1],
+            [lease.lessor, self.lessor_user1], 
+            [lease.tenant, self.tenant_user1],
+            [lease.start_date, self.today + timedelta(days=11+1)], 
+            [lease.end_date,self.today + timedelta(days=11+30)],
+            [lease.payment_frequency, 'WEEKLY'], 
+            [lease.payment_amount, 300], 
+            [lease.payment_type, 'DEBIT']]
+        for [item, expected_value] in comparison_pair: self.assertEqual(item, expected_value)
+
+    def test_fail_tenant_create_lease(self):
+        payload={
+            'parking': self.parking1.pk,
+            'vehicle': self.vehicle1.pk,
+            'start_date': self.today + timedelta(days=11+1),
+            'end_date': self.today + timedelta(days=11+30),
+            'payment_frequency': 'WEEKLY',
+            'payment_type': 'DEBIT',
+            'payment_details': 'payment details 3',
+            'payment_amount': 300
+        }
+        self.client.login(
+            username='TenantUser2', 
+            password='TenantUser2@123!'
+        )
+
+        response = self.client.post(
+            reverse('lease-list'),
+            data=payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_fail_lessor_create_lease(self):
+        payload={
+            'parking': self.parking1.pk,
+            'vehicle': self.vehicle1.pk,
+            'start_date': self.today + timedelta(days=11+1),
+            'end_date': self.today + timedelta(days=11+30),
+            'payment_frequency': 'WEEKLY',
+            'payment_type': 'DEBIT',
+            'payment_details': 'payment details 3',
+            'payment_amount': 300
+        }
+        self.client.login(
+            username='LessorUser2', 
+            password='LessorUser2@123!'
+        )
+
+        response = self.client.post(
+            reverse('lease-list'),
+            data=payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_create_lease(self):
+        payload={
+            'parking': self.parking1.pk,
+            'vehicle': self.vehicle2.pk,
+            'start_date': self.today + timedelta(days=11+1),
+            'end_date': self.today + timedelta(days=11+30),
+            'payment_frequency': 'WEEKLY',
+            'payment_type': 'DEBIT',
+            'payment_details': 'payment details 4',
+            'payment_amount': 400
+        }
+        self.client.login(
+            username='StaffUser1', 
+            password='StaffUser1@123!'
+        )
+        response = self.client.post(
+            reverse('lease-list'),
+            data=payload,
+            format='json'
+        )
+        lease = get_object_or_404(Lease, payment_details='payment details 4')
+        comparison_pair = [
+            [response.status_code, 201], 
+            [lease.parking, self.parking1], 
+            [lease.vehicle, self.vehicle2],
+            [lease.lessor, self.lessor_user1], 
+            [lease.tenant, self.tenant_user2],
+            [lease.start_date, self.today + timedelta(days=11+1)], 
+            [lease.end_date,self.today + timedelta(days=11+30)],
+            [lease.payment_frequency, 'WEEKLY'], 
+            [lease.payment_amount, 400], 
+            [lease.payment_type, 'DEBIT']]
+        for [item, expected_value] in comparison_pair: self.assertEqual(item, expected_value)
+
+    def test_fail_staff_create_lease(self):
+        payload={
+            'parking': self.parking2.pk,
+            'vehicle': self.vehicle2.pk,
+            'start_date': self.today + timedelta(days=11+1),
+            'end_date': self.today + timedelta(days=11+30),
+            'payment_frequency': 'WEEKLY',
+            'payment_type': 'DEBIT',
+            'payment_details': 'payment details 4',
+            'payment_amount': 400
+        }
+        self.client.login(
+            username='StaffUser1', 
+            password='StaffUser1@123!'
+        )
+        response = self.client.post(
+            reverse('lease-list'),
+            data=payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
+    def test_fail_auth_create_lease(self):
+        payload={
+            'parking': self.parking2.pk,
+            'vehicle': self.vehicle2.pk,
+            'start_date': self.today + timedelta(days=11+1),
+            'end_date': self.today + timedelta(days=11+30),
+            'payment_frequency': 'WEEKLY',
+            'payment_type': 'DEBIT',
+            'payment_details': 'payment details 4',
+            'payment_amount': 400
+        }
+        response = self.client.post(
+            reverse('lease-list'),
+            data=payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, 403)
 
     # all destroy
     # all partial update

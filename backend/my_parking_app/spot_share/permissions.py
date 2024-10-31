@@ -28,11 +28,9 @@ class VehiclePermissions(BasePermission):
 class LeasePermissions(BasePermission):
     def has_permission(self, request, view):
         user = request.user
-        if not user.is_authenticated:
-            return False
-        elif not user.is_superuser and not user.is_staff and \
+        if user.is_authenticated and not user.is_superuser and not user.is_staff and \
             not user.groups.filter(name='Staff').exists():
             return view.action != 'destroy'
-        return True
+        return user.is_authenticated
     
         
