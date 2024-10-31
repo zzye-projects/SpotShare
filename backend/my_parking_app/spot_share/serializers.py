@@ -36,3 +36,37 @@ class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         fields = '__all__'
+
+class LeaseSerializer(serializers.ModelSerializer):
+    lessor = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        many=False)
+    tenant = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        many=False)
+    
+    class Meta:
+        model = Lease
+        fields = '__all__'
+
+class LeaseListSerializer(serializers.ModelSerializer):
+    lessor = serializers.PrimaryKeyRelatedField(
+        queryset = User.objects.all(),
+        many=False)
+    tenant = serializers.PrimaryKeyRelatedField(
+        queryset = User.objects.all(),
+        many=False)
+    parking = serializers.PrimaryKeyRelatedField(
+        queryset = Parking.objects.all(),
+        many = False
+    )
+    vehicle = serializers.PrimaryKeyRelatedField(
+        queryset = Vehicle.objects.all(),
+        many = False
+    )
+    
+    class Meta:
+        model = Lease
+        fields = ['parking', 'vehicle', 'lessor', 'lessor_approved', 
+                  'tenant', 'tenant_approved', 'start_date', 'end_date', 'staff_approved']
+    

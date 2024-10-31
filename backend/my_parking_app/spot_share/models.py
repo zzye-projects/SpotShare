@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.utils import timezone
-from .globals import STATUS_CHOICES, PAYMENT_CHOICES, FREQUENCY_CHOICES
+from .globals import PAYMENT_CHOICES, FREQUENCY_CHOICES, APPROVAL_CHOICES
 
 def validate_dates(start_date, end_date):
     if start_date < timezone.now().date():
@@ -61,11 +61,11 @@ class Parking(models.Model):
         db_index=True, 
         null=True,
         blank=True)
-    status = models.CharField(
+    staff_approved = models.CharField(
         max_length=10,
-        choices=STATUS_CHOICES,
-        db_index=True,
-        default='DRAFT')
+        choices=APPROVAL_CHOICES,
+        default='PENDING'
+    )
     payment_amount = models.DecimalField(
         max_digits=10, 
         decimal_places=2,
@@ -91,15 +91,37 @@ class Lease(models.Model):
     parking = models.ForeignKey(Parking, on_delete=models.CASCADE, db_index=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, db_index=True)
     
+    lessor = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        db_index=True,
+        related_name='leases_as_lessor')
+    lessor_approved = models.CharField(
+        max_length=10,
+        choices=APPROVAL_CHOICES,
+        default='PENDING'
+    )
+
+    tenant = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        db_index=True,
+        related_name='leases_as_tenant') 
+    tenant_approved = models.CharField(
+        max_length=10,
+        choices=APPROVAL_CHOICES,
+        default='PENDING'
+    )
+
     start_date = models.DateField(db_index=True)
     end_date = models.DateField(
         db_index=True, 
         null=True, 
         blank=True)
-    status = models.CharField(
+    staff_approved = models.CharField(
         max_length=10,
-        choices=STATUS_CHOICES,
-        default='DRAFT'
+        choices=APPROVAL_CHOICES,
+        default='PENDING'
     )
     payment_amount = models.DecimalField(
         max_digits=10, 
@@ -127,6 +149,12 @@ class Lease(models.Model):
         if (not self.end_date and self.parking.available_end) or \
         (self.end_date and self.parking.available_end and self.end_date > self.parking.available_end):
             raise ValidationError('Lease start date shouldn\'t be later than available end date.')
+        
+        if (self.parking.lessor != self.lessor):
+            raise ValidationError('The parking spot must belong to the lessor on the lease.')
+        
+        if (self.vehicle.owner != self.tenant):
+            raise ValidationError('The vehicle owner must be the tenant on the lease.')
 
     def save(self, *args, **kwargs):
         self.full_clean()

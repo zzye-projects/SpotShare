@@ -18,7 +18,7 @@ class ParkingViewSet(viewsets.ModelViewSet):
         'parking_unit': ['exact', 'icontains'],
         'available_start': ['gte'],
         'available_end': ['lte'],
-        'status': ['exact', 'icontains'],
+        'staff_approved': ['exact', 'icontains'],
         'payment_amount': ['lte'],
         'payment_frequency': ['exact']
     }
@@ -34,12 +34,12 @@ class ParkingViewSet(viewsets.ModelViewSet):
                 {'message': 'Only staff users associated to the address can create associated parking'}, 
                 status=status.HTTP_403_FORBIDDEN)
         
-        request.data.pop('status', None)
+        request.data.pop('staff_approved', None)
         return super().create(request, *args, **kwargs)
     
     def partial_update(self, request, *args, **kwargs):
         if self.get_object().lessor == request.user:
-            request.data['status'] = 'DRAFT'
+            request.data['staff_approved'] = 'PENDING'
         request.data.pop('lessor', None)
         request.data.pop('address', None)
 

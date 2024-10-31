@@ -97,6 +97,7 @@ class ParkingModelTest(TestCase):
         self.assertEqual(parking.available_start, today)
         self.assertEqual(parking.payment_amount, 100)
         self.assertEqual(parking.payment_frequency, 'MONTHLY')
+        self.assertEqual(parking.staff_approved, 'PENDING')
 
     def test_invalid_address(self):
         with self.assertRaises(ValueError) as context:
@@ -141,23 +142,26 @@ class LeaseModelTest(TestCase):
             country = 'country1',
         )
 
-        lessor_group, created = Group.objects.get_or_create(name='Lessor')
-        tenant_group, created = Group.objects.get_or_create(name='Tenant')
-
-        cls.tenant_user = User.objects.create(
-            username='TenantUser', 
+        cls.tenant_user1 = User.objects.create(
+            username='Tenant1User', 
             password='TU1@123!'
         )
-        cls.tenant_user.groups.add(tenant_group)
+        cls.tenant_user2 = User.objects.create(
+            username='Tenant2User', 
+            password='TU2@123!'
+        )
 
-        cls.lessor_user = User.objects.create(
-            username='LessorUser', 
+        cls.lessor_user1 = User.objects.create(
+            username='Lessor1User', 
             password='LU1@123!'
         )
-        cls.lessor_user.groups.add(lessor_group)
+        cls.lessor_user2 = User.objects.create(
+            username='Lessor2User', 
+            password='LU2@123!'
+        )
 
         cls.vehicle = Vehicle.objects.create(
-            owner=cls.tenant_user, 
+            owner=cls.tenant_user1, 
             make='make1',
             model='model1',
             colour='colour1',
@@ -165,7 +169,7 @@ class LeaseModelTest(TestCase):
 
         cls.future_date = timezone.now().date() + timedelta(days=15)
         cls.parking = Parking.objects.create(
-            lessor=cls.lessor_user,
+            lessor=cls.lessor_user1,
             address=cls.address,
             parking_unit='P1 U1',
             available_start=cls.future_date,
@@ -177,8 +181,13 @@ class LeaseModelTest(TestCase):
         lease = Lease.objects.create(
             parking=self.parking,
             vehicle=self.vehicle,
+            lessor=self.lessor_user1,
+            lessor_approved='APPROVED',
+            tenant=self.tenant_user1,
+            tenant_approved='APPROVED',
             start_date = self.future_date + timedelta(days=5),
             end_date = self.future_date + timedelta(days=15),
+            staff_approved='APPROVED',
             payment_frequency='ANNUALLY',
             payment_type='CREDIT',
             payment_details='payment details 1',
@@ -187,9 +196,13 @@ class LeaseModelTest(TestCase):
 
         self.assertEqual(lease.parking, self.parking)
         self.assertEqual(lease.vehicle, self.vehicle)
+        self.assertEqual(lease.lessor, self.lessor_user1)
+        self.assertEqual(lease.lessor_approved, 'APPROVED')
+        self.assertEqual(lease.tenant, self.tenant_user1)
+        self.assertEqual(lease.tenant_approved, 'APPROVED')
         self.assertEqual(lease.start_date, self.future_date + timedelta(days=5))
         self.assertEqual(lease.end_date, self.future_date + timedelta(days=15))
-        self.assertEqual(lease.status, 'DRAFT'),
+        self.assertEqual(lease.staff_approved, 'APPROVED'),
         self.assertEqual(lease.payment_frequency, 'ANNUALLY')
         self.assertEqual(lease.payment_type, 'CREDIT')
         self.assertEqual(lease.payment_details, 'payment details 1')   
@@ -201,11 +214,14 @@ class LeaseModelTest(TestCase):
             Lease.objects.create(
             parking=self.parking,
             vehicle=self.vehicle,
+            lessor=self.lessor_user1,
+            tenant=self.tenant_user1,
             start_date = self.future_date - timedelta(days=5),
             end_date = self.future_date + timedelta(days=15),
             payment_frequency='ANNUALLY',
             payment_type='CREDIT',
-            payment_details='payment details 1'
+            payment_details='payment details 1',
+            payment_amount=100
         )
         self.assertIn('Lease start date shouldn\'t be earlier than available start date.',
                         str(context.exception))
@@ -215,11 +231,14 @@ class LeaseModelTest(TestCase):
             Lease.objects.create(
             parking=self.parking,
             vehicle=self.vehicle,
+            lessor=self.lessor_user1,
+            tenant=self.tenant_user1,
             start_date = self.future_date + timedelta(days=5),
             end_date = self.future_date + timedelta(days=60),
             payment_frequency='ANNUALLY',
             payment_type='CREDIT',
-            payment_details='payment details 1'
+            payment_details='payment details 1',
+            payment_amount=100
         )
         self.assertIn('Lease start date shouldn\'t be later than available end date.',
                         str(context.exception))
@@ -229,11 +248,14 @@ class LeaseModelTest(TestCase):
             Lease.objects.create(
             parking=self.parking,
             vehicle=self.vehicle,
+            lessor=self.lessor_user1,
+            tenant=self.tenant_user1,
             start_date=self.future_date + timedelta(days=5),
             end_date=self.future_date + timedelta(days=15),
             payment_frequency='BAD CHOICE',
             payment_type='CREDIT',
-            payment_details='payment details 1'
+            payment_details='payment details 1',
+            payment_amount=100
         )
         self.assertIn("'BAD CHOICE' is not a valid choice.",
                       str(context.exception))
@@ -243,13 +265,51 @@ class LeaseModelTest(TestCase):
             Lease.objects.create(
             parking=self.parking,
             vehicle=self.vehicle,
+            lessor=self.lessor_user1,
+            tenant=self.tenant_user1,
             start_date=self.future_date + timedelta(days=5),
             end_date=self.future_date + timedelta(days=15),
             payment_frequency='ANNUALLY',
             payment_type='BAD CHOICE',
-            payment_details='payment details 1'
+            payment_details='payment details 1',
+            payment_amount=100
         )
         self.assertIn("'BAD CHOICE' is not a valid choice.",
+                      str(context.exception))
+        
+    def test_invalid_tenant(self):
+        with self.assertRaises(ValidationError) as context:
+            Lease.objects.create(
+            parking=self.parking,
+            vehicle=self.vehicle,
+            lessor=self.lessor_user1,
+            tenant=self.tenant_user2,
+            start_date=self.future_date + timedelta(days=5),
+            end_date=self.future_date + timedelta(days=15),
+            payment_frequency='ANNUALLY',
+            payment_type='CREDIT',
+            payment_details='payment details 1',
+            payment_amount=100
+        )
+        self.assertIn('The vehicle owner must be the tenant on the lease.',
+                      str(context.exception))
+        
+    def test_invalid_lessor(self):
+        with self.assertRaises(ValidationError) as context:
+            Lease.objects.create(
+            parking=self.parking,
+            vehicle=self.vehicle,
+            lessor=self.lessor_user2,
+            tenant=self.tenant_user1,
+            start_date=self.future_date + timedelta(days=5),
+            end_date=self.future_date + timedelta(days=15),
+            payment_frequency='ANNUALLY',
+            payment_type='CREDIT',
+            payment_details='payment details 1',
+            payment_amount=100
+
+        )
+        self.assertIn('The parking spot must belong to the lessor on the lease.',
                       str(context.exception))
 
 

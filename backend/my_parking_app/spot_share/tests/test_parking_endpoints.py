@@ -111,7 +111,7 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P2 U1',
             'available_start': self.today + timedelta(days=11),
             'available_end': self.today + timedelta(days=21),
-            'status': 'ACTIVE',
+            'staff_approved': 'PENDING',
             'payment_amount': 100,
             'payment_frequency': 'MONTHLY'
         }
@@ -134,7 +134,7 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P2 U1',
             'available_start': self.today + timedelta(days=11),
             'available_end': self.today + timedelta(days=21),
-            'status': 'ACTIVE',
+            'staff_approved': 'APPROVED',
             'payment_amount': 300,
             'payment_frequency': 'WEEKLY'
         }
@@ -153,7 +153,7 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(parking3.address, self.address2)
         self.assertEqual(parking3.available_start, self.today + timedelta(days=11))
         self.assertEqual(parking3.available_end, self.today + timedelta(days=21))
-        self.assertEqual(parking3.status, 'DRAFT')
+        self.assertEqual(parking3.staff_approved, 'PENDING')
         self.assertEqual(parking3.payment_amount, 300)
         self.assertEqual(parking3.payment_frequency, 'WEEKLY')
 
@@ -179,7 +179,7 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P1 U11',
             'available_start': self.today + timedelta(days=111),
             'available_end': self.today + timedelta(days=211),
-            'status': 'ACTIVE',
+            'staff_approved': 'APPROVED',
             'payment_amount': 101,
             'payment_frequency': 'WEEKLY'
         }
@@ -195,7 +195,7 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(parking1.parking_unit, 'P1 U11')
         self.assertEqual(parking1.available_start, self.today + timedelta(days=111))
         self.assertEqual(parking1.available_end, self.today + timedelta(days=211))
-        self.assertEqual(parking1.status, 'DRAFT')
+        self.assertEqual(parking1.staff_approved, 'PENDING')
         self.assertEqual(parking1.payment_amount, 101)
         self.assertEqual(parking1.payment_frequency, 'WEEKLY')
 
@@ -221,7 +221,7 @@ class ParkingTestCase(APITestCase):
             'parking_unit': 'P1 U111',
             'available_start': self.today + timedelta(days=1111),
             'available_end': self.today + timedelta(days=2111),
-            'status': 'ARCHIVED',
+            'staff_approved': 'REJECTED',
             'payment_amount': 102,
             'payment_frequency': 'ANNUALLY'
         }
@@ -237,7 +237,7 @@ class ParkingTestCase(APITestCase):
         self.assertEqual(parking1.parking_unit, 'P1 U111')
         self.assertEqual(parking1.available_start, self.today + timedelta(days=1111))
         self.assertEqual(parking1.available_end, self.today + timedelta(days=2111))
-        self.assertEqual(parking1.status, 'ARCHIVED')
+        self.assertEqual(parking1.staff_approved, 'REJECTED')
         self.assertEqual(parking1.payment_amount, 102)
         self.assertEqual(parking1.payment_frequency, 'ANNUALLY')
 

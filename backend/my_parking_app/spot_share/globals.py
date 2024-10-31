@@ -1,8 +1,3 @@
-STATUS_CHOICES = [
-    ('DRAFT','Draft'),
-    ('ACTIVE','Active'),
-    ('ARCHIVED', 'Archived')
-]
 FREQUENCY_CHOICES = [
     ('ANNUALLY','Annually'),
     ('MONTHLY', 'Monthly'),
@@ -11,4 +6,9 @@ FREQUENCY_CHOICES = [
 PAYMENT_CHOICES = [
     ('CREDIT', 'Credit'),
     ('DEBIT', 'Pre-Authorized Debit')
+]
+APPROVAL_CHOICES = [
+    ('PENDING', 'Pending'),
+    ('APPROVED', 'Approved'),
+    ('REJECTED', 'Rejected')
 ]

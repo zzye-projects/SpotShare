@@ -4,12 +4,14 @@ from rest_framework.routers import DefaultRouter
 from .views.address_views import AddressViewSet
 from .views.parking_views import ParkingViewSet
 from .views.vehicle_views import VehicleViewSet
-
+from .views.lease_views import LeaseViewSet
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'address', AddressViewSet, basename='address')
 router.register(r'parking', ParkingViewSet, basename='parking')
 router.register(r'vehicle', VehicleViewSet, basename='vehicle')
+router.register(r'lease', LeaseViewSet, basename='lease')
+
 
 urlpatterns = [
     path('', include(router.urls)),
