@@ -50,7 +50,6 @@ class LeaseViewSet(viewsets.ModelViewSet):
         
         request.data['lessor'] = parking.lessor
         request.data['tenant'] = vehicle.owner
-
         request.data.pop('lessor_approved', None)
         request.data.pop('tenant_approved', None)
         request.data.pop('staff_approved', None)
@@ -80,16 +79,14 @@ class LeaseViewSet(viewsets.ModelViewSet):
     
     def partial_update(self, request, *args, **kwargs):
         lease, user = self.get_object(), request.user
-        reset_fields = {'staff_approved': 'DRAFT', 'lessor_approved': 'PENDING', 
-                        'tenant_approved': 'PENDING'}
-        if lease.tenant == user:
-            del reset_fields['tenant_approved']
-        if lease.lessor == user: 
-            del reset_fields['lessor_approved']
-        if lease.parking.address in user.address.all():
-            del reset_fields['staff_approved']
+        reset_fields = {'staff_approved', 'lessor_approved','tenant_approved'}
+        if lease.tenant == user: reset_fields.remove('tenant_approved')
+        if lease.lessor == user: reset_fields.remove('lessor_approved')
+        if lease.parking.address in user.addresses.all(): reset_fields.remove('staff_approved')
 
-        for (key, value) in reset_fields.items():
-            request.data[key] = value
+        for field in reset_fields: request.data[field] = 'PENDING'
+
+        exclude_fields = ['parking', 'lessor', 'tenant', 'vehicle']
+        for field in exclude_fields: request.data.pop(field, None)
 
         return super().partial_update(request, *args, **kwargs)
