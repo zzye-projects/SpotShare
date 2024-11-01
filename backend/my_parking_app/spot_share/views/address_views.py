@@ -39,8 +39,8 @@ class AddressViewSet(viewsets.ModelViewSet):
         message = 'Users added to address' if change_type == 'add' else 'Users removed from address'
         return response.Response({'message': message}, status=status_code)
     
-    def add_staff_user(self, request, pk=None):
+    def add_staff_to_address(self, request, pk=None):
         return self.change_user(request, 'add', pk)
     
-    def remove_staff_user(self, request, pk=None):
+    def remove_staff_from_address(self, request, pk=None):
         return self.change_user(request, 'remove', pk)

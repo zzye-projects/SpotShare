@@ -207,7 +207,7 @@ class AddressTestCase(APITestCase):
             password='SuperUser@123!'
         )
         response = self.client.post(
-            reverse('add-staff-user', kwargs={'pk': self.address2.pk}), 
+            reverse('add-staff-to-address', kwargs={'pk': self.address2.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]},
             format='json'
         )
@@ -222,7 +222,7 @@ class AddressTestCase(APITestCase):
             password='StaffUser@123!'
         )
         response = self.client.post(
-            reverse('add-staff-user', kwargs={'pk': self.address2.pk}), 
+            reverse('add-staff-to-address', kwargs={'pk': self.address2.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]}, 
             format='json'
         )
@@ -235,7 +235,7 @@ class AddressTestCase(APITestCase):
             password='SuperUser@123!'
         )
         response = self.client.delete(
-            reverse('remove-staff-user', kwargs={'pk': self.address1.pk}), 
+            reverse('remove-staff-from-address', kwargs={'pk': self.address1.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]},
             format='json'
         )
@@ -248,7 +248,7 @@ class AddressTestCase(APITestCase):
             password='StaffUser@123!'
         )
         response = self.client.delete(
-            reverse('remove-staff-user', kwargs={'pk': self.address1.pk}), 
+            reverse('remove-staff-from-address', kwargs={'pk': self.address1.pk}), 
             data={'users': [self.staff_user1.pk, self.staff_user2.pk]}, 
             format='json'
         )

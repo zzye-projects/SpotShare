@@ -69,4 +69,3 @@ class LeaseListSerializer(serializers.ModelSerializer):
         model = Lease
         fields = ['parking', 'vehicle', 'lessor', 'lessor_approved', 
                   'tenant', 'tenant_approved', 'start_date', 'end_date', 'staff_approved']
-    

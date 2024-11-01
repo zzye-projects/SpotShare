@@ -33,4 +33,8 @@ class LeasePermissions(BasePermission):
             return view.action != 'destroy'
         return user.is_authenticated
     
+class IsSuperAdminPermissions(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_superuser or request.user.is_staff
+
         
