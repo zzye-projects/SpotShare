@@ -1,0 +1,17 @@
+.footer {
+    background-color: black;
+    width: 100%;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.footer ul {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer li {
+    list-style-type: none;
+}

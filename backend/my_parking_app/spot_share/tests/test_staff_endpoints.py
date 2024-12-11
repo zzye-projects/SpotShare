@@ -78,7 +78,7 @@ class StaffTestCase(APITestCase):
             password='SuperUser@123!'
         )
         response = self.client.delete(
-            reverse('staff-detail', kwargs={'pk': self.staff_user3.pk}))
+            reverse('staff-detail'), kwargs={'pk': self.staff_user3.pk})
         self.assertEqual(response.status_code, 200)
         self.assertFalse(self.staff_user3.groups.filter(name='Staff').exists())
 
@@ -87,8 +87,8 @@ class StaffTestCase(APITestCase):
             username='StaffUser2', 
             password='StaffUser2@123!'
         )
-        response = self.client.delete(
-            reverse('staff-detail', kwargs={'pk': self.staff_user3.pk}))
+        response = self.client.(
+            reverse('staff-detail'), kwargs={'pk': self.staff_user3.pk})
 
         self.assertEqual(response.status_code, 403)
         self.assertFalse(self.staff_user3.groups.filter(name='Staff').exists())

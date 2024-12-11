@@ -1,0 +1,38 @@
+[
+    {
+        "model": "spot_share.address",
+        "pk": 1,
+        "fields": {
+            "street": "street1",
+            "street_no": "1",
+            "city": "city1",
+            "state": "state1",
+            "postal_code": "postal_code1",
+            "country": "country1"
+        }
+    },
+    {
+        "model": "spot_share.address",
+        "pk": 2,
+        "fields": {
+            "street": "street2",
+            "street_no": "2",
+            "city": "city2",
+            "state": "state2",
+            "postal_code": "postal_code2",
+            "country": "country2"
+        }
+    },
+    {
+        "model": "spot_share.address",
+        "pk": 3,
+        "fields": {
+            "street": "street3",
+            "street_no": "3",
+            "city": "city3",
+            "state": "state3",
+            "postal_code": "postal_code3",
+            "country": "country3"
+        }
+    }
+]
