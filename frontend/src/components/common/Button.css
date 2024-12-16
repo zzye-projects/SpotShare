@@ -1,0 +1,18 @@
+button {
+    border-radius: 15px;
+    height: 3em;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.primary-button {
+    background-color: black;
+    color: white;
+}
+
+.secondary-button {
+    background-color: white;
+    border-color: black;
+    color: black;
+}

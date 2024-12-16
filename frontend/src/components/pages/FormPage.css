@@ -1,0 +1,15 @@
+.form-page {
+    display: flex;
+    align-self: center;
+    align-items: stretch;
+    width: 50%;
+    flex-direction: column;
+    gap: 3rem;
+    padding: 20px 30px;
+}
+
+@media(min-width: 768px) {
+    .form-page {
+        width: 100%;
+    }
+}
