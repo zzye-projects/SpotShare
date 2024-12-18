@@ -1,6 +1,6 @@
 .main {
     padding: 30px;
-    flex: 1;
     display: flex;
     justify-content: center;
+    flex-grow: 1;
 }

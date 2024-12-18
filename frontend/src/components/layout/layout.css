@@ -1,0 +1,33 @@
+.footer li,
+.header li {
+    list-style-type: none;
+}
+
+.footer li a,
+.header li a {
+    text-decoration: none;
+    color: white;
+}
+
+.footer li a:hover,
+.header li a:hover {
+    color: lightgray;
+}
+
+.desktop-only {
+    display: none;
+}
+
+.mobile-only {
+    display: flex;
+}
+
+@media(min-width: 768px) {
+    .desktop-only {
+        display: flex;
+    }
+    
+    .mobile-only {
+        display: none;
+    }
+}

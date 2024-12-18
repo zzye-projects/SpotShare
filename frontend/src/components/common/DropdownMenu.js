@@ -1,13 +1,12 @@
-const DropdownMenu = ({items}) => {
+import './DropdownMenu.css';
+import Navigation from './Navigation';
+
+const DropdownMenu = ({items, className}) => {
     return (
-        <div className='dropdown-menu'>
-            <ul>
-                {items.map(({item, link}) => (
-                    <li><a href={link}>{item}</a></li>
-                ))}
-            </ul>
-        </div>
-    );
+        <div 
+            className={`dropdown-menu ${className}`}>
+            <Navigation items={items}/>
+        </div>  );
 };
 
 export default DropdownMenu;

@@ -1,15 +1,16 @@
 import './Footer.css';
+import './layout.css'
+import { Navigation } from '../common';
 
-const Footer = ({items}) => {
+const Footer = () => {
+    const items = [
+        {item:'about', label: 'About Us'},
+        {item:'terms', label: 'Terms of Use'},
+        {item:'careers', label: 'Careers'},
+        {item: 'contact', label: 'Contact Us'}];
     return (
         <section className='footer'>
-            <ul>
-                {items.map(item => (
-                    <li key={item}>
-                        <a>{item}</a>
-                    </li>
-                ))}
-            </ul>
+            <Navigation items={items}/>
         </section>
     )
 }

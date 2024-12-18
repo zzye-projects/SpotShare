@@ -1,14 +1,14 @@
 import './App.css';
 import {Header, Main, Footer} from './components/layout';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const App = () => {
-  const footerItems = ['About Us', 'Terms of Use', 'Careers', 'Contact Us']
   return (
-  <>
+  <Router>
     <Header/>
     <Main/>
-    <Footer items={footerItems}/>
-  </>
+    <Footer/>
+  </Router>
 )};
 
 export default App;

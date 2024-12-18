@@ -6,3 +6,22 @@
     display: flex;
     justify-content: space-between;
 }
+
+.profile-menu {
+    top: 50px;
+    right: 5px;
+    width: 200px;
+}
+
+.header button {
+    all: unset; 
+    cursor: pointer;
+    color: white;
+}
+
+.header button:hover {
+    color: lightgray;
+}
+
+@media(min-width: 768px) {
+}
