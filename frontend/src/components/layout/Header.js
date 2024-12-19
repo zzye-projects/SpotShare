@@ -33,7 +33,7 @@ const Header = () => {
                 items={[
                     {item:'login', label:'Log In'}, 
                     {item:'logout', label:'Log Out'}]}
-                className={`profile-menu ${isMenuOpen? 'menu-open':''}`}/>
+                isVisible={isMenuOpen}/>
         </li>
     </ul>);
 };

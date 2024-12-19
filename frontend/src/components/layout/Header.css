@@ -7,7 +7,7 @@
     justify-content: space-between;
 }
 
-.profile-menu {
+.header .dropdown-menu {
     top: 50px;
     right: 5px;
     width: 200px;

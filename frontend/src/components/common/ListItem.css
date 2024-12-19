@@ -1,0 +1,30 @@
+.list-item {
+    display: flex;
+    flex-direction: column;
+    border: solid 1px grey;
+    padding: 10px 20px;
+    line-height: 2rem;
+}
+
+.list-item-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.list-item-address {
+    font-style: italic;
+    font-weight: bold;
+}
+
+.list-item-row:first-child {
+    flex-direction: row;
+}
+.list-item-row:last-child {
+    flex-direction: column;
+}
+
+@media(min-width: 768px) {
+    .list-item-row:last-child {
+        flex-direction: row;
+    }
+}

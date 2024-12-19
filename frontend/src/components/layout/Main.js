@@ -1,6 +1,5 @@
 import './Main.css';
-import { SearchForm } from '../forms';
-import { FormPage, Page } from '../pages';
+import { SearchParkingPage, Page } from '../pages';
 import { PLACEHOLDER_TEXT } from '../../globals';
 import { Routes, Route } from 'react-router-dom';
 
@@ -9,22 +8,19 @@ const Main = () => (
         <Routes>
             <Route 
                 path="/" 
-                element={
-                <FormPage title="Find Parking">
-                    <SearchForm />
-                </FormPage>}/>
+                element={<SearchParkingPage/>}/>
             <Route 
                 path="/about" 
-                element={<Page title='About Us' text={PLACEHOLDER_TEXT}/>} />
+                element={<Page title='About Us'>{PLACEHOLDER_TEXT}</Page>}/>
             <Route 
                 path="/terms" 
-                element={<Page title='Terms of Use' text={PLACEHOLDER_TEXT}/>} />
+                element={<Page title='Terms of Use'>{PLACEHOLDER_TEXT}</Page>}/>
             <Route 
                 path="/careers" 
-                element={<Page title='Careers' text={PLACEHOLDER_TEXT}/>} />
+                element={<Page title='Careers'>{PLACEHOLDER_TEXT}</Page>}/>
             <Route 
                 path="/contact" 
-                element={<Page title='Contact Us' text={PLACEHOLDER_TEXT}/>} />
+                element={<Page title='Contact Us'>{PLACEHOLDER_TEXT}</Page>}/>
         </Routes>
     </section>
 );

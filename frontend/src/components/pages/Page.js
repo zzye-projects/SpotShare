@@ -1,10 +1,10 @@
 import './Page.css';
 
-const Page = ({title, text}) => {
+const Page = ({title, children}) => {
     return (
         <section className='page'>
             <h1>{title}</h1>
-            <span>{text}</span>
+            {children}
         </section>);
 }
 

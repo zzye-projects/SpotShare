@@ -1,0 +1,8 @@
+.visible {
+    display: block;
+}
+
+.invisible-button {
+    all: unset; 
+    cursor: pointer;
+}

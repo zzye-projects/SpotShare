@@ -1,18 +1,18 @@
 .page {
-    width: 100%;
     display: flex;
-    align-items: stretch;
     flex-direction: column;
     padding: 20px 30px;
+    width: 100%;
+    align-items: center;
 }
 
-h1 {
+.page h1 {
     padding-bottom: 20px;
+    width: 100%;
 }
 
 @media(min-width: 768px) {
-    .page {
+    .page h1, .page .search-form {
         width: 50%;
     }
-    
 }

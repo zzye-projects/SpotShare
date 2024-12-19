@@ -26,6 +26,7 @@
 
 .form-field input, .form-field select {
     height: 2rem;
+    width: 100%;
 }
 
 @media(min-width: 768px) {

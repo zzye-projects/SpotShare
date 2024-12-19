@@ -3,7 +3,7 @@
     border-radius: 15px;
     background-color: white;
     position: absolute;
-    border: 1px solid lightgrey;
+    border: 1px solid grey;
     padding: 10px 20px;
     z-index: 1000;
 }
@@ -11,10 +11,6 @@
 .dropdown-menu ul li a {
     list-style: none;
     color: black;
-    font-size: 0.75rem;
+    font-size: 1rem;
     line-height: 1.5rem;
-}
-
-.dropdown-menu.menu-open {
-    display: block;
 }
