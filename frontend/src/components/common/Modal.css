@@ -10,10 +10,15 @@
     padding: 30px 40px;
 }
 
+.modal h1 {
+    padding: 0;
+}
+
 .modal-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 30px;
 }
 
 @media(min-width: 768px) {

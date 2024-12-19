@@ -1,0 +1,33 @@
+.progress-bar { 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+}
+
+.progress-fraction {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.progress-connection {
+    height: 10px;
+    width: 15%;
+    background-color: lightgrey;
+    flex-grow: 1;
+}
+
+.progress-step {
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+    background-color: lightgrey;
+}
+
+.progress-step.completed, .progress-connection.completed{
+    background-color: black;
+    border: solid 1px black;
+}

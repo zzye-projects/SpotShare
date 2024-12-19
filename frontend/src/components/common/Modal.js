@@ -1,12 +1,13 @@
 import { ReactComponent as CloseIcon } from '../../assets/icons/close_icon.svg';
 import './Modal.css';
 import './common.css';
+import ProgressBar from './ProgressBar';
 
 const Modal = ({title, children, isVisible}) => {
     return (
         <div className={`modal ${isVisible? 'visible':''}`}>
             <div className='modal-row'>
-                <span>Progress Bar</span>
+                <ProgressBar steps={5} currentStep={3}/>
                 <button className='invisible-button'>
                     <CloseIcon/>
                 </button>
