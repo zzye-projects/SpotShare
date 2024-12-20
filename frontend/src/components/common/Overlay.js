@@ -1,7 +1,8 @@
 import './Overlay.css';
 
-const Overlay = () => {
-    return (<div className='overlay desktop-only'></div>)
+const Overlay = ({isVisible}) => {
+    return (<div 
+        className={`overlay ${isVisible? 'visible':''}`}></div>)
 };
 
 export default Overlay;

@@ -12,7 +12,7 @@ const validationSchema = Yup.object({
     maxPrice: Yup.number().min(0, 'Price must be at least 0').required('Max price is required'),
   });
   
-  const SearchForm = () => {
+  const SearchForm = ({onSubmit}) => {
     const [addresses, setAddresses] = useState([]);
     const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
 
@@ -39,10 +39,7 @@ const validationSchema = Yup.object({
             payFrequency: 'MONTHLY'
             }}
         validationSchema={validationSchema}
-        onSubmit={(values, {setSubmitting}) => {
-            console.log(values);
-            setSubmitting(false); 
-        }}
+        onSubmit={onSubmit}
       >
         {({ handleSubmit, isSubmitting, values }) => (
           <Form className='search-form'>

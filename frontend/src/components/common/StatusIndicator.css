@@ -4,6 +4,8 @@
     gap: 0.5rem;
     position: relative;
     top: 10px;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .status-circle {
