@@ -11,6 +11,7 @@
 
 .modal h1 {
     padding: 0;
+    width: 100%;
 }
 
 .modal-row {
@@ -23,14 +24,14 @@
     justify-content: space-between;
 }
 
-.modal-row:last-child {
+.modal-actions {
     width: 100%;
     display: flex;
     gap: 1rem;
     justify-content: end;
 }
 
-.modal-row:last-child button {
+.modal-actions button {
     flex-grow: 1;
 }
 
@@ -42,9 +43,5 @@
         border-radius: 15px;
         top: 50px;
         border: solid 1px grey;
-    }
-
-    .modal-row:last-child {
-        justify-content: end;
     }
 }

@@ -16,7 +16,7 @@ const Modal = ({
     return (
         <div className={`modal ${isVisible? 'visible':''}`}>
             <div className='modal-row'>
-                {progressBar? <ProgressBar {...progressBar}/>:null}
+                <ProgressBar {...progressBar}/>
                 <button 
                     onClick={onClose}
                     className='invisible-button'>

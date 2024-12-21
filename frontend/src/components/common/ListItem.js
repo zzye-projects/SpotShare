@@ -1,16 +1,25 @@
 import './ListItem.css';
 import StatusIndicator from './StatusIndicator';
 
-const ListItem = ({address, unit, startDate, endDate, price, frequency, status=''}) => {
+const ListItem = ({
+    address, 
+    parkingUnit, 
+    availableStart, 
+    availableEnd, 
+    paymentAmount, 
+    paymentpaymentFrequency, 
+    status=''}) => {
     return (
         <section className='list-item'>
             <div className='list-item-row'>
-                <span className='list-item-address'>{`${address} ${unit}`}</span>
-                <div className='list-item-status'><StatusIndicator status={status}/></div>
+                <span className='list-item-address'>{`${address} ${parkingUnit}`}</span>
+                <div className='list-item-status'>
+                    {status? <StatusIndicator status={status}/>:null}
+                </div>
             </div>
             <div className='list-item-row'>
-                <span className='list-item-dates'>{`${startDate} - ${endDate}`}</span>
-                <span className='list-item-price'>{`$${price} / ${frequency}`}</span>
+                <span className='list-item-dates'>{`${availableStart} - ${availableEnd}`}</span>
+                <span className='list-item-paymentAmount'>{`$${paymentAmount} / ${paymentpaymentFrequency}`}</span>
             </div>
         </section>
     )

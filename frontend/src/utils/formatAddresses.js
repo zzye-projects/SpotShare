@@ -1,7 +1,7 @@
 const formatAddresses = (addresses) => {
-    return addresses.map(({ id, street, street_no, city, state, postal_code, country }) => ({
+    return addresses.map(({ id, street, streetNo, city, state, postalCode, country }) => ({
         id,
-        value: `${street} ${street_no}, ${city}, ${state} ${postal_code}, ${country}`
+        value: `${street} ${streetNo}, ${city}, ${state} ${postalCode}, ${country}`
     }));
 };
 

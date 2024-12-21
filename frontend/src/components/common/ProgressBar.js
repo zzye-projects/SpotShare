@@ -1,5 +1,5 @@
 import './ProgressBar.css';const ProgressBar = ({totalSteps, currentStep}) => {
-    if( totalSteps < 2 ) { return null };
+    if( totalSteps < 2 || currentStep === 0) { return <div></div> };
     return (
         <div className='progress-bar'>
             <div className='progress-step completed'/>
