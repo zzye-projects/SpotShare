@@ -17,7 +17,7 @@ router.register(r'lease', LeaseViewSet, basename='lease')
 urlpatterns = [
     path('', include(router.urls)),
     path('address/<int:pk>/add_user/', AddressViewSet.as_view({'post': 'add_staff_to_address'}), name='add-staff-to-address'),
-    path('address/<int:pk>/remove_user/', AddressViewSet.as_view({'delete': 'remove_staff_from_address'}), name='remove-staff-from-user'),
+    path('address/<int:pk>/remove_user/', AddressViewSet.as_view({'delete': 'remove_staff_from_address'}), name='remove-staff-from-address'),
     path('groups/staff/users', StaffUserView.as_view(), name='staff-list'),
     path('groups/staff/users/<int:pk>', SingleStaffUserView.as_view(), name='staff-detail'),
 ]

@@ -2,28 +2,55 @@ import { SearchForm } from '../forms';
 import { Modal, ListItems, Overlay } from '../common';
 import Page from './Page';
 import { useState } from 'react';
+import axios from 'axios';
 
-const mockListItems = [
-    {id: '1', address: 'address1', unit: 'unit1', startDate: 'startDate1', endDate: 'endDate1', price: 'price1', frequency: 'monthly', status: 'leased'},
-    {id: '2', address: 'address2', unit: 'unit2', startDate: 'startDate2', endDate: 'endDate2', price: 'price2', frequency: 'annually', status: 'available'},
-    {id: '3', address: 'address3', unit: 'unit3', startDate: 'startDate3', endDate: 'endDate3', price: 'price3', frequency: 'weekly', status: 'pending'},
-];
 const SearchParkingPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen)
-        console.log('modal is getting toggled ', isModalOpen)
-    }; 
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => { setIsModalOpen(false); setCurrentStep(1) }
+
+    const totalSteps = 3;
+    const [currentStep, setCurrentStep] = useState(1);
+    const nextStep = () => setCurrentStep(currentStep + 1);
+    const prevStep = () => {
+        if (currentStep === 1) { closeModal(); }
+        else { setCurrentStep(currentStep - 1); }
+    }
+
+    const [searchResults, setSearchResults] = useState([]);
+    const handleSearchSubmit = async (data) => {
+        try {
+            const response = await axios.get('/api/parking');
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error('Failed to fetch parking units', error);
+        }
+    };
+
+    const stepContent = [
+        {title: 'Select Your Spot', content:<ListItems items={searchResults}/>},
+        {title: 'Create a Proposal', content:null},
+        {title: 'Review Lease', content: null}];
+    const primaryBtn = {
+        label: 'Next',
+        onClick: nextStep,
+        className: 'primary-button'};
+    const secondaryBtn = {
+        label: 'Back',
+        onClick: prevStep,
+        className: 'secondary-button'};
 
     return (
         <Page title="Find Parking">
-            <SearchForm onSubmit={toggleModal}/>
-            <Modal 
-                title='Select Your Spot'
+            <SearchForm onSubmit={handleSearchSubmit}/>
+            <Modal
+                title={stepContent[currentStep - 1].title}
                 isVisible={isModalOpen}
-                onClose={toggleModal}>
-                <ListItems items={mockListItems}/>
-            </Modal>
+                onClose={closeModal}
+                progressBar={{totalSteps, currentStep}}
+                primaryBtn={primaryBtn}
+                secondaryBtn={secondaryBtn}
+                content={stepContent[currentStep - 1].content}/>
             <Overlay isVisible={isModalOpen}/>
         </Page>)};
 

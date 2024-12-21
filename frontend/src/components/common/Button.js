@@ -1,12 +1,12 @@
 import './Button.css';
-const Button = ({label, onClick, handleSubmit, isLoading, isLoadingLabel, className}) => {
+const Button = ({label, onClick, isDisabled=false, isDisabledLabel='', className}) => {
     return (
         <button 
             type='submit'
-            onClick={handleSubmit? handleSubmit: onClick}
-            disabled={isLoading}
+            onClick={onClick}
+            disabled={isDisabled}
             className={className}>
-            {isLoading? isLoadingLabel: label}
+            {isDisabled? isDisabledLabel: label}
         </button>
     )
 }

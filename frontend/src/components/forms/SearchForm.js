@@ -39,9 +39,11 @@ const validationSchema = Yup.object({
             payFrequency: 'MONTHLY'
             }}
         validationSchema={validationSchema}
-        onSubmit={onSubmit}
+        onSubmit={(values, { setSubmitting }) => {
+            onSubmit(values);
+            setSubmitting(false);}}
       >
-        {({ handleSubmit, isSubmitting, values }) => (
+        {({ isSubmitting, values }) => (
           <Form className='search-form'>
             <div className='form-row'>
                 <Field
@@ -77,9 +79,8 @@ const validationSchema = Yup.object({
             <div className='form-row'>
                 <Button
                     label="Search"
-                    isLoading={isSubmitting}
-                    isLoadingLabel="Searching..."
-                    handleSubmit={handleSubmit}
+                    isDisabled={isSubmitting}
+                    isDisabledLabel="Searching..."
                     className='primary-button'/>
             </div>
             </Form>

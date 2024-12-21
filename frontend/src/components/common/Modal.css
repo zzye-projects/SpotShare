@@ -16,8 +16,22 @@
 .modal-row {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     margin-bottom: 30px;
+}
+
+.modal-row:nth-child(1), .modal-row:nth-child(2){
+    justify-content: space-between;
+}
+
+.modal-row:last-child {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+}
+
+.modal-row:last-child button {
+    flex-grow: 1;
 }
 
 @media(min-width: 768px) {
@@ -28,5 +42,9 @@
         border-radius: 15px;
         top: 50px;
         border: solid 1px grey;
+    }
+
+    .modal-row:last-child {
+        justify-content: end;
     }
 }
