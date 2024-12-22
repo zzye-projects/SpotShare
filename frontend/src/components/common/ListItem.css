@@ -1,9 +1,14 @@
 .list-item {
+    all: unset;
     display: flex;
     flex-direction: column;
     border: solid 1px grey;
     padding: 10px 20px;
     line-height: 2rem;
+}
+
+.list-item.selected {
+    background-color: lightgrey;
 }
 
 .list-item-row {

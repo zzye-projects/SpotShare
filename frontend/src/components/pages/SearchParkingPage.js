@@ -7,10 +7,13 @@ import axios from 'axios';
 const SearchParkingPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
-    const closeModal = () => { setIsModalOpen(false); setCurrentStep(0) }
+    const closeModal = () => { 
+        setIsModalOpen(false); 
+        setCurrentStep(0);
+        setSelectedParking(null);}
 
     const totalSteps = 3;
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(0);
     const nextStep = () => setCurrentStep(currentStep + 1);
     const prevStep = () => {
         if (currentStep === 1) { closeModal(); }
@@ -46,25 +49,34 @@ const SearchParkingPage = () => {
         label: 'Back',
         onClick: prevStep,
         className: 'secondary-button'};
-    const cancelBtn = {
+    
+
+    const [selectedParking, setSelectedParking] = useState(null);
+    const cancelBtn ={
         label: 'Cancel',
         onClick: closeModal,
         className: 'secondary-button'
-    }
+    };
     const stepContent = [
         {
             title: 'No units that satisfy your criteria', 
             content: <span>Please update your search criteria.</span>,
-            primaryBtn: cancelBtn, secondaryBtn: null
+            primaryBtn: cancelBtn, 
+            secondaryBtn: null
         },
         {
             title: 'Select Your Spot', 
-            content:<ListItems items={searchResults}/>,
-            primaryBtn: nextBtn, secondaryBtn: cancelBtn
+            content:<ListItems 
+                items={searchResults} 
+                selection={{
+                    selected: selectedParking, 
+                    selectItem: setSelectedParking}}/>,
+            primaryBtn: { ...nextBtn, isDisabled: !selectedParking}, 
+            secondaryBtn: cancelBtn
         },
         {
             title: 'Create a Proposal', 
-            content: null,
+            content: selectedParking,
             primaryBtn: nextBtn, secondaryBtn: backBtn
         },
         {

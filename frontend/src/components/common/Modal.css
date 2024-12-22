@@ -9,6 +9,11 @@
     display: none;
 }
 
+.modal.visible {
+    display: flex;
+    flex-direction: column;
+}
+
 .modal h1 {
     padding: 0;
     width: 100%;
@@ -28,7 +33,8 @@
     width: 100%;
     display: flex;
     gap: 1rem;
-    justify-content: end;
+    align-self: flex-end;
+    margin-top: auto;
 }
 
 .modal-actions button {

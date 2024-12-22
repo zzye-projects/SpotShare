@@ -9,7 +9,7 @@ import './SearchForm.css';
 
 const validationSchema = Yup.object({
     address: Yup.string().required('Address is required'),
-    maxPrice: Yup.number().min(0, 'Price must be at least 0').required('Max price is required'),
+    maxPrice: Yup.number().min(0, 'Price must be at least 0'),
   });
   
   const SearchForm = ({onSubmit}) => {
@@ -43,7 +43,7 @@ const validationSchema = Yup.object({
             onSubmit(values);
             setSubmitting(false);}}
       >
-        {({ isSubmitting, values }) => (
+        {({ isSubmitting, values, isValid, dirty }) => (
           <Form className='search-form'>
             <div className='form-row'>
                 <Field
@@ -79,8 +79,7 @@ const validationSchema = Yup.object({
             <div className='form-row'>
                 <Button
                     label="Search"
-                    isDisabled={isSubmitting}
-                    isDisabledLabel="Searching..."
+                    isDisabled={isSubmitting || !isValid || !dirty}
                     className='primary-button'/>
             </div>
             </Form>

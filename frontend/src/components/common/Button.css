@@ -16,3 +16,8 @@ button {
     border-color: black;
     color: black;
 }
+
+.disabled-button {
+    background-color: grey;
+    color: white;
+}
