@@ -8,3 +8,4 @@ export { default as Navigation } from './Navigation';
 export { default as Modal } from './Modal';
 export { default as ListItems} from './ListItems';
 export { default as Overlay } from './Overlay';
+export { default as ViewOnlyField} from './ViewOnlyField';

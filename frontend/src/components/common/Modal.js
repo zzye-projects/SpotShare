@@ -24,7 +24,7 @@ const Modal = ({
                 </button>
             </div>
             <div className='modal-row'><h1>{title}</h1></div>
-            <div className='modal-row'>{content}</div>
+            <div className='modal-row modal-content'>{content}</div>
             <div className='modal-row modal-actions'>
                 {secondaryBtn? <Button {...secondaryBtn}/>: null}
                 {primaryBtn? <Button {...primaryBtn}/>: null}

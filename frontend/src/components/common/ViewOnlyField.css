@@ -1,0 +1,4 @@
+.form-field.view-only input {
+    border: 1px darkgrey solid;
+    background-color: lightgrey;
+}

@@ -1,0 +1,27 @@
+.lease-proposal-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1em;
+}
+
+.form-field input, .form-field select {
+    height: 2rem;
+    width: 100%;
+}
+
+.lease-proposal-form .form-row {
+    display: grid;
+    gap: 1em;
+}
+
+.lease-proposal-form .form-row:last-child {
+    grid-template-columns: 2fr 1fr;
+}
+
+@media(min-width:768px){
+    .lease-proposal-form .form-row:first-child,
+    .lease-proposal-form .form-row:nth-child(3) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

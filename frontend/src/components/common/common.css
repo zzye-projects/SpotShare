@@ -1,4 +1,4 @@
-.modal.visible, .overlay.visible, .visible {
+.overlay.visible, .visible {
     display: block;
 }
 

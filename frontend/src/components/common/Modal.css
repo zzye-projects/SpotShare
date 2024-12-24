@@ -29,6 +29,10 @@
     justify-content: space-between;
 }
 
+.modal-content {
+    overflow-y: auto;
+}
+
 .modal-actions {
     width: 100%;
     display: flex;
@@ -44,8 +48,8 @@
 @media(min-width: 768px) {
     .modal {
         width: 50%;
-        min-height: 50%;
         height: fit-content;
+        max-height: 80%;
         border-radius: 15px;
         top: 50px;
         border: solid 1px grey;

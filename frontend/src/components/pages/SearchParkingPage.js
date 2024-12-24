@@ -1,4 +1,4 @@
-import { SearchForm } from '../forms';
+import { SearchForm, LeaseProposalForm } from '../forms';
 import { Modal, ListItems, Overlay } from '../common';
 import Page from './Page';
 import { useState } from 'react';
@@ -6,21 +6,21 @@ import axios from 'axios';
 
 const SearchParkingPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const totalSteps = 3;
+    const [currentStep, setCurrentStep] = useState(0);
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedParking, setSelectedParking] = useState(null);
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => { 
         setIsModalOpen(false); 
         setCurrentStep(0);
         setSelectedParking(null);}
-
-    const totalSteps = 3;
-    const [currentStep, setCurrentStep] = useState(0);
     const nextStep = () => setCurrentStep(currentStep + 1);
     const prevStep = () => {
         if (currentStep === 1) { closeModal(); }
         else { setCurrentStep(currentStep - 1); }
     }
-
-    const [searchResults, setSearchResults] = useState([]);
     const handleSearchSubmit = async ({address, startDate, endDate, maxPrice, payFrequency}) => {
         const params = {'address': address, 'staff_approved': 'APPROVED'};
         if (startDate) { params['available_start_gte'] = startDate; }
@@ -49,9 +49,6 @@ const SearchParkingPage = () => {
         label: 'Back',
         onClick: prevStep,
         className: 'secondary-button'};
-    
-
-    const [selectedParking, setSelectedParking] = useState(null);
     const cancelBtn ={
         label: 'Cancel',
         onClick: closeModal,
@@ -70,13 +67,13 @@ const SearchParkingPage = () => {
                 items={searchResults} 
                 selection={{
                     selected: selectedParking, 
-                    selectItem: setSelectedParking}}/>,
+                    selectFunction: setSelectedParking}}/>,
             primaryBtn: { ...nextBtn, isDisabled: !selectedParking}, 
             secondaryBtn: cancelBtn
         },
         {
             title: 'Create a Proposal', 
-            content: selectedParking,
+            content: <LeaseProposalForm/>,
             primaryBtn: nextBtn, secondaryBtn: backBtn
         },
         {
