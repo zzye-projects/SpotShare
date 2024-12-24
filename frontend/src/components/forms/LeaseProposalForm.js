@@ -1,7 +1,6 @@
 import { SelectField, DatePicker, PriceField, ViewOnlyField } from '../common';
-import { useEffect, useState } from 'react';
 import formatVehicles from '../../utils/formatVehicles';
-import axios from 'axios';
+import { useVehicles } from '../../context';
 import {FREQUENCY_CHOICES} from '../../globals';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
@@ -23,29 +22,8 @@ const LeaseProposalForm = ({
     availableEnd=null, 
     price, 
     payFrequency}) => {
-
-    const [vehicles, setVehicles] = useState([]);
-    useEffect(() => {
-        const fetchVehicles = async () => {
-            try {
-                const response = await axios.get('/api/vehicle');  
-                setVehicles(formatVehicles(response.data));
-            } catch (error) {
-                console.error('Failed to fetch vehicles', error);
-            }};
-        fetchVehicles();
-    }, []);
-
-    <div className='form-row'>
-                  <Field
-                      name='address'
-                      as={ViewOnlyField}
-                      label='Address *'/>
-                  <Field
-                      name='parkingUnit'
-                      as={ViewOnlyField}
-                      label='Parking Unit *'/>
-              </div>
+    
+    const {vehicles} = useVehicles();
     return (
         <Formik
           initialValues={{
@@ -77,7 +55,7 @@ const LeaseProposalForm = ({
                       name='vehicle'
                       as={SelectField}
                       label='Vehicle *'
-                      options={vehicles}/>
+                      options={formatVehicles(vehicles)}/>
               </div>
               <div className='form-row'>
                   <Field

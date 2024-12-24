@@ -1,1 +1,2 @@
-export { useAddresses, AddressesProvider } from './AddressContext';
+export { useAddresses, AddressesProvider } from './AddressesContext';
+export { useVehicles, VehiclesProvider } from './VehiclesContext';
