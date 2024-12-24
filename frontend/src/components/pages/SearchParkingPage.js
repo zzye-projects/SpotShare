@@ -9,13 +9,13 @@ const SearchParkingPage = () => {
     const totalSteps = 3;
     const [currentStep, setCurrentStep] = useState(0);
     const [searchResults, setSearchResults] = useState([]);
-    const [selectedParking, setSelectedParking] = useState(null);
+    const [lease, setLease] = useState({parkingId: ''});
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => { 
         setIsModalOpen(false); 
         setCurrentStep(0);
-        setSelectedParking(null);}
+        setLease({parkingId: ''});}
     const nextStep = () => setCurrentStep(currentStep + 1);
     const prevStep = () => {
         if (currentStep === 1) { closeModal(); }
@@ -39,6 +39,10 @@ const SearchParkingPage = () => {
         } catch (error) {
             console.error('Failed to fetch parking units', error);
         }
+    };
+
+    const selectParking = (parkingId) => {
+        setLease({parkingId});
     };
 
     const nextBtn = {
@@ -65,10 +69,9 @@ const SearchParkingPage = () => {
             title: 'Select Your Spot', 
             content:<ListItems 
                 items={searchResults} 
-                selection={{
-                    selected: selectedParking, 
-                    selectFunction: setSelectedParking}}/>,
-            primaryBtn: { ...nextBtn, isDisabled: !selectedParking}, 
+                selectedId={lease.parkingId} 
+                selectFunction={selectParking}/>,
+            primaryBtn: { ...nextBtn, isDisabled: !lease.parkingId}, 
             secondaryBtn: cancelBtn
         },
         {

@@ -1,6 +1,5 @@
 import { SelectField, DatePicker, PriceField, Button } from '../common';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useAddresses } from '../../context';
 import formatAddresses from '../../utils/formatAddresses' ;
 import {FREQUENCY_CHOICES} from '../../globals';
 import { Formik, Field, Form } from 'formik';
@@ -13,21 +12,7 @@ const validationSchema = Yup.object({
   });
   
   const SearchForm = ({onSubmit}) => {
-    const [addresses, setAddresses] = useState([]);
-    const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
-
-    useEffect(() => {
-        const fetchAddresses = async () => {
-            try {
-                const response = await axios.get('/api/address');
-                setAddresses(formatAddresses(response.data))
-            } catch (error) {
-                console.error('Failed to fetch addresses', error);
-            } finally {
-                setIsLoadingAddresses(false);
-            }
-        }
-        fetchAddresses()}, [])
+    const {addresses, isLoadingAddresses} = useAddresses();
 
     return (
       <Formik
@@ -50,7 +35,7 @@ const validationSchema = Yup.object({
                     name='address'
                     as={SelectField}
                     label='Address *'
-                    options={addresses}
+                    options={formatAddresses(addresses)}
                     isLoading={isLoadingAddresses}/>
             </div>
             <div className='form-row'>

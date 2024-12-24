@@ -1,13 +1,14 @@
 import ListItem from './ListItem';
 import './ListItems.css';
 
-const ListItems = ({items, selection}) => {
+const ListItems = ({items, selectedId, selectFunction}) => {
     return (
         <section className='list-items'>
             {items.map(item => <ListItem 
                 key={item.id}
                 {...item}
-                {...selection}/>)}
+                selectedId={selectedId}
+                selectFunction={selectFunction}/>)}
         </section>
     )};
 

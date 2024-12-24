@@ -10,11 +10,11 @@ const ListItem = ({
     paymentAmount, 
     paymentpaymentFrequency, 
     status='',
-    selected,
+    selectedId,
     selectFunction }) => {
     return (
         <button 
-            className={`list-item ${selected === id? 'selected':''}`}
+            className={`list-item ${selectedId === id? 'selected':''}`}
             onClick={()=> selectFunction(id)}>
             <div className='list-item-row'>
                 <span className='list-item-address'>{`${address} ${parkingUnit}`}</span>
