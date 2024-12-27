@@ -16,24 +16,27 @@ const validationSchema = Yup.object({
   });
 
 const LeaseProposalForm = ({
-    address, 
-    parkingUnit, 
-    availableStart, 
-    availableEnd=null, 
-    price, 
-    payFrequency}) => {
-    
+    // address, 
+    // parkingUnit, 
+    // setLeaseVehicle, 
+    // availableStart, 
+    // setLeaseStart,
+    // availableEnd, 
+    // setLeaseEnd,
+    // setPrice,
+    updateLease}) => {
     const {vehicles} = useVehicles();
+
     return (
         <Formik
           initialValues={{
-              address: address,
-              parkingUnit: parkingUnit,
+              address: '',
+              parkingUnit: '',
               vehicle: '',
-              startDate: availableStart,
-              endDate: availableEnd,
-              maxPrice: price,
-              payFrequency: payFrequency
+              startDate: '',
+              endDate: '',
+              price: '',
+              payFrequency: ''
               }}
           validationSchema={validationSchema}
           onSubmit={(values) => console.log(values)}
@@ -62,19 +65,19 @@ const LeaseProposalForm = ({
                       name='startDate'
                       as={DatePicker}
                       label='Start *'
-                      minDate={availableStart}/>
+                      minDate={new Date()}/>
                   <Field
                       name='endDate'
                       as={DatePicker}
                       label='End'
-                      minDate={values.startDate ? new Date(values.startDate): availableStart}
-                      maxDate={availableEnd}/>
+                      minDate={values.startDate ? new Date(values.startDate): new Date()}
+                      />
               </div>
               <div className='form-row'>
                   <Field
-                      name='maxPrice'
+                      name='price'
                       as={PriceField}
-                      label='Max Price *'/>
+                      label='Proposed Price *'/>
                   <Field
                       name='payFrequency'
                       as={SelectField}

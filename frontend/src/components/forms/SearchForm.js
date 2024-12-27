@@ -12,7 +12,7 @@ const validationSchema = Yup.object({
   });
   
   const SearchForm = ({onSubmit}) => {
-    const {addresses, isLoadingAddresses} = useAddresses();
+    const {formattedAddresses, isLoadingAddresses} = useAddresses();
 
     return (
       <Formik
@@ -35,7 +35,7 @@ const validationSchema = Yup.object({
                     name='address'
                     as={SelectField}
                     label='Address *'
-                    options={formatAddresses(addresses)}
+                    options={formattedAddresses}
                     isLoading={isLoadingAddresses}/>
             </div>
             <div className='form-row'>

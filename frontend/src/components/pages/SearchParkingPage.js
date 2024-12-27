@@ -5,23 +5,26 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const SearchParkingPage = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const totalSteps = 3;
     const [currentStep, setCurrentStep] = useState(0);
-    const [searchResults, setSearchResults] = useState([]);
-    const [lease, setLease] = useState({parkingId: ''});
-
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => { 
-        setIsModalOpen(false); 
-        setCurrentStep(0);
-        setLease({parkingId: ''});}
     const nextStep = () => setCurrentStep(currentStep + 1);
     const prevStep = () => {
         if (currentStep === 1) { closeModal(); }
         else { setCurrentStep(currentStep - 1); }
     }
-    const handleSearchSubmit = async ({address, startDate, endDate, maxPrice, payFrequency}) => {
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => { 
+        setIsModalOpen(false); 
+        setCurrentStep(0);
+        setLease({});}
+
+    const [lease, setLease] = useState({});
+    const updateLease = (key, value) => { setLease({...lease, [key]:value})};
+
+    const [searchParkingResults, setsearchParkingResults] = useState([]);
+    const handleParkingSearch = async ({address, startDate, endDate, maxPrice, payFrequency}) => {
         const params = {'address': address, 'staff_approved': 'APPROVED'};
         if (startDate) { params['available_start_gte'] = startDate; }
         if (endDate) { params['available_end_lte'] = endDate; }
@@ -33,18 +36,18 @@ const SearchParkingPage = () => {
             const response = await axios.get('/api/parking', {params:params});
             if (response.data.length > 0) { 
                 nextStep();
-                setSearchResults(response.data);
+                setsearchParkingResults(response.data);
+                updateLease('addressId', Number(address));
             }
             openModal();
         } catch (error) {
             console.error('Failed to fetch parking units', error);
         }
     };
-
-    const selectParking = (parkingId) => {
-        setLease({parkingId});
-    };
-
+    // address, 
+    // parkingUnit, 
+    // availableStart, 
+    // availableEnd, 
     const nextBtn = {
         label: 'Next',
         onClick: nextStep,
@@ -68,15 +71,16 @@ const SearchParkingPage = () => {
         {
             title: 'Select Your Spot', 
             content:<ListItems 
-                items={searchResults} 
+                items={searchParkingResults} 
                 selectedId={lease.parkingId} 
-                selectFunction={selectParking}/>,
+                selectFunction={(id) => {updateLease('parkingId', id)}}/>,
             primaryBtn: { ...nextBtn, isDisabled: !lease.parkingId}, 
             secondaryBtn: cancelBtn
         },
         {
             title: 'Create a Proposal', 
-            content: <LeaseProposalForm/>,
+            content: <LeaseProposalForm
+                updateLease={updateLease}/>,
             primaryBtn: nextBtn, secondaryBtn: backBtn
         },
         {
@@ -87,7 +91,7 @@ const SearchParkingPage = () => {
 
     return (
         <Page title="Find Parking">
-            <SearchForm onSubmit={handleSearchSubmit}/>
+            <SearchForm onSubmit={handleParkingSearch}/>
             <Modal
                 title={stepContent[currentStep].title}
                 isVisible={isModalOpen}
