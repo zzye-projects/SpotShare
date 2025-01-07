@@ -8,15 +8,13 @@ export const useAddresses = () => useContext(AddressesContext);
 
 export const AddressesProvider = ({children}) => {
     const [addresses, setAddresses] = useState([]);
-    const [formattedAddresses, setFormattedAddresses] = useState([]);
     const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
 
     useEffect(() => {
         const fetchAddresses = async () => {
             try {
                 const response = await axios.get('/api/address');
-                setAddresses(response.data);
-                setFormattedAddresses(formatAddresses(response.data));
+                setAddresses(formatAddresses(response.data));
             } catch (error) {
                 console.error('Failed to fetch addresses', error);
             } finally {
@@ -26,7 +24,7 @@ export const AddressesProvider = ({children}) => {
         fetchAddresses()}, [])
 
     return (
-        <AddressesContext.Provider value={{addresses, formattedAddresses, isLoadingAddresses}}>
+        <AddressesContext.Provider value={{addresses, isLoadingAddresses}}>
             {children}
         </AddressesContext.Provider>
     )

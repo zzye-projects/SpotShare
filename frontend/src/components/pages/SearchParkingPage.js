@@ -1,10 +1,12 @@
 import { SearchForm, LeaseProposalForm } from '../forms';
 import { Modal, ListItems, Overlay } from '../common';
 import Page from './Page';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useAddresses } from '../../context';
 
 const SearchParkingPage = () => {
+    const {addresses} = useAddresses();
     const totalSteps = 3;
     const [currentStep, setCurrentStep] = useState(0);
     const nextStep = () => setCurrentStep(currentStep + 1);
@@ -23,7 +25,7 @@ const SearchParkingPage = () => {
     const [lease, setLease] = useState({});
     const updateLease = (key, value) => { setLease({...lease, [key]:value})};
 
-    const [searchParkingResults, setsearchParkingResults] = useState([]);
+    const [searchParkingResults, setSearchParkingResults] = useState([]);
     const handleParkingSearch = async ({address, startDate, endDate, maxPrice, payFrequency}) => {
         const params = {'address': address, 'staff_approved': 'APPROVED'};
         if (startDate) { params['available_start_gte'] = startDate; }
@@ -36,18 +38,14 @@ const SearchParkingPage = () => {
             const response = await axios.get('/api/parking', {params:params});
             if (response.data.length > 0) { 
                 nextStep();
-                setsearchParkingResults(response.data);
-                updateLease('addressId', Number(address));
+                setSearchParkingResults(response.data);
+                updateLease('address', addresses[address]);
             }
             openModal();
         } catch (error) {
             console.error('Failed to fetch parking units', error);
         }
     };
-    // address, 
-    // parkingUnit, 
-    // availableStart, 
-    // availableEnd, 
     const nextBtn = {
         label: 'Next',
         onClick: nextStep,
@@ -72,14 +70,15 @@ const SearchParkingPage = () => {
             title: 'Select Your Spot', 
             content:<ListItems 
                 items={searchParkingResults} 
-                selectedId={lease.parkingId} 
-                selectFunction={(id) => {updateLease('parkingId', id)}}/>,
-            primaryBtn: { ...nextBtn, isDisabled: !lease.parkingId}, 
+                selected={lease} 
+                selectFunction={(parking) => {updateLease('parking', parking)}}/>,
+            primaryBtn: { ...nextBtn, isDisabled: lease.parking && !lease.parking.id}, 
             secondaryBtn: cancelBtn
         },
         {
             title: 'Create a Proposal', 
             content: <LeaseProposalForm
+                lease={lease}
                 updateLease={updateLease}/>,
             primaryBtn: nextBtn, secondaryBtn: backBtn
         },

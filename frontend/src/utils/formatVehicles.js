@@ -1,8 +1,11 @@
-const formatVehicles = (vehicles) => {
-    return vehicles.map(({id, make, model, colour, licensePlate}) => ({
-        id, 
-        value: `${make}/${model}/${colour}/${licensePlate}`
-    }));
-};
+const formatVehicles = vehicles => {
+    const formattedVehicles = {};
+    vehicles.forEach(vehicle => {
+        const { id, make, model, colour, licensePlate } = vehicle;
+        formattedVehicles[id] = {
+            ...vehicle,
+            formatted: `${make}/${model}/${colour}/${licensePlate}`
+        }});
+    return formattedVehicles}; 
 
 export default formatVehicles;

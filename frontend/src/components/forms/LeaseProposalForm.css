@@ -5,7 +5,7 @@
     gap: 1em;
 }
 
-.form-field input, .form-field select {
+.form-field input, .form-field select, .form-field textarea {
     height: 2rem;
     width: 100%;
 }

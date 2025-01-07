@@ -7,7 +7,7 @@ const ViewOnlyField = ({ label, value, ...props }) => {
     return (
         <div className='form-field view-only'>
             <label htmlFor={field.name}>{label}</label>
-            <input id={field.name} value={value} readOnly={true}/>
+            <textarea id={field.name} value={value} readOnly={true}/>
         </div>
     )
 };

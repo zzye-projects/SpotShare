@@ -1,36 +1,31 @@
 import './ListItem.css';
 import StatusIndicator from './StatusIndicator';
-import { formatAddresses } from '../../utils';
-import { useAddresses } from '../../context';
+import {FREQUENCY_CHOICES} from '../../globals';
 
 const ListItem = ({
-    id, 
-    address, 
-    parkingUnit, 
-    availableStart, 
-    availableEnd, 
-    paymentAmount, 
-    paymentpaymentFrequency, 
-    status='',
-    selectedId,
+    item,
+    selected,
     selectFunction }) => {
-    
-    const {formattedAddresses} = useAddresses();
-    const selectedAddress = formattedAddresses.find(item => item.id === address).value;
-
+    const { id, 
+        parkingUnit,
+        availableStart, 
+        availableEnd, 
+        paymentAmount, 
+        paymentFrequency, 
+        status} = item;
     return (
         <button 
-            className={`list-item ${selectedId === id? 'selected':''}`}
-            onClick={()=> selectFunction(id)}>
+            className={`list-item ${selected.parking && selected.parking.id === id? 'selected':''}`}
+            onClick={()=> selectFunction(item)}>
             <div className='list-item-row'>
-                <span className='list-item-address'>{`${selectedAddress} - ${parkingUnit}`}</span>
+                <span className='list-item-address'>{`${selected.address.formatted} - ${parkingUnit}`}</span>
                 <div className='list-item-status'>
                     {status? <StatusIndicator status={status}/>:null}
                 </div>
             </div>
             <div className='list-item-row'>
                 <span className='list-item-dates'>{`${availableStart} - ${availableEnd}`}</span>
-                <span className='list-item-paymentAmount'>{`$${paymentAmount} / ${paymentpaymentFrequency}`}</span>
+                <span className='list-item-paymentAmount'>{`$${paymentAmount} / ${FREQUENCY_CHOICES[paymentFrequency].formatted}`}</span>
             </div>
         </button>
     )

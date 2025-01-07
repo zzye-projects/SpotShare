@@ -1,6 +1,5 @@
 import { SelectField, DatePicker, PriceField, Button } from '../common';
 import { useAddresses } from '../../context';
-import formatAddresses from '../../utils/formatAddresses' ;
 import {FREQUENCY_CHOICES} from '../../globals';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
@@ -12,7 +11,7 @@ const validationSchema = Yup.object({
   });
   
   const SearchForm = ({onSubmit}) => {
-    const {formattedAddresses, isLoadingAddresses} = useAddresses();
+    const {addresses, isLoadingAddresses} = useAddresses();
 
     return (
       <Formik
@@ -35,7 +34,7 @@ const validationSchema = Yup.object({
                     name='address'
                     as={SelectField}
                     label='Address *'
-                    options={formattedAddresses}
+                    options={addresses}
                     isLoading={isLoadingAddresses}/>
             </div>
             <div className='form-row'>

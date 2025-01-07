@@ -11,11 +11,10 @@ const SelectField = ({label, isLoading, options, ...props}) => {
                 {...field} 
                 disabled={isLoading}>
                 <option value="" disabled>Select an option</option>
-                {options.map(({id, value}) => (
-                    <option key={id} value={id}>
-                        {value}
-                    </option>
-                ))}
+                {Object.entries(options).map(([key, value]) => 
+                    (<option key={key} value={key}>
+                        {value.formatted}
+                    </option>))}
             </select>
             <InlineError error={meta.touched && meta.error}/>
         </div>

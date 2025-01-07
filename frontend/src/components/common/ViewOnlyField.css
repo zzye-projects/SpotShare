@@ -1,4 +1,6 @@
-.form-field.view-only input {
+.form-field.view-only textarea {
     border: 1px darkgrey solid;
     background-color: lightgrey;
+    word-wrap: break-word; 
+    word-break: break-all;
 }

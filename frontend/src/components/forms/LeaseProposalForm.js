@@ -15,23 +15,15 @@ const validationSchema = Yup.object({
     payFrequency: Yup.string().required('This field is required')
   });
 
-const LeaseProposalForm = ({
-    // address, 
-    // parkingUnit, 
-    // setLeaseVehicle, 
-    // availableStart, 
-    // setLeaseStart,
-    // availableEnd, 
-    // setLeaseEnd,
-    // setPrice,
-    updateLease}) => {
+const LeaseProposalForm = ({lease, updateLease}) => {
     const {vehicles} = useVehicles();
+    console.log(lease);
 
     return (
         <Formik
           initialValues={{
-              address: '',
-              parkingUnit: '',
+              address: lease.address.formatted,
+              parkingUnit: lease.parking.parkingUnit,
               vehicle: '',
               startDate: '',
               endDate: '',
@@ -58,7 +50,7 @@ const LeaseProposalForm = ({
                       name='vehicle'
                       as={SelectField}
                       label='Vehicle *'
-                      options={formatVehicles(vehicles)}/>
+                      options={vehicles}/>
               </div>
               <div className='form-row'>
                   <Field
