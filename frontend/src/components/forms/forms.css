@@ -1,0 +1,29 @@
+Form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1em;
+}
+.form-row.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.form-buttons button {
+    width: 100%;
+}
+
+.form-row a {
+    padding-top: 10px;
+}
+
+.forgot-password-form .form-row:first-child {
+    display: flex;
+    flex-direction: column;
+}
+
+@media(min-width:768px) {
+    .form-buttons button {
+        width: 50%;
+    }
+}

@@ -20,10 +20,10 @@ const SearchParkingPage = () => {
     const closeModal = () => { 
         setIsModalOpen(false); 
         setCurrentStep(0);
-        setLease({});}
+        setUserEntry({});}
 
-    const [lease, setLease] = useState({});
-    const updateLease = (key, value) => { setLease({...lease, [key]:value})};
+    const [userEntry, setUserEntry] = useState({});
+    const updateUserEntry = (key, value) => { setUserEntry({...userEntry, [key]:value})};
 
     const [searchParkingResults, setSearchParkingResults] = useState([]);
     const handleParkingSearch = async ({address, startDate, endDate, maxPrice, payFrequency}) => {
@@ -39,13 +39,14 @@ const SearchParkingPage = () => {
             if (response.data.length > 0) { 
                 nextStep();
                 setSearchParkingResults(response.data);
-                updateLease('address', addresses[address]);
+                updateUserEntry('address', addresses[address]);
             }
             openModal();
         } catch (error) {
             console.error('Failed to fetch parking units', error);
         }
     };
+
     const nextBtn = {
         label: 'Next',
         onClick: nextStep,
@@ -70,16 +71,16 @@ const SearchParkingPage = () => {
             title: 'Select Your Spot', 
             content:<ListItems 
                 items={searchParkingResults} 
-                selected={lease} 
-                selectFunction={(parking) => {updateLease('parking', parking)}}/>,
-            primaryBtn: { ...nextBtn, isDisabled: lease.parking && !lease.parking.id}, 
+                selected={userEntry} 
+                selectFunction={(parking) => {updateUserEntry('parking', parking)}}/>,
+            primaryBtn: { ...nextBtn, isDisabled: !userEntry.parking}, 
             secondaryBtn: cancelBtn
         },
         {
             title: 'Create a Proposal', 
             content: <LeaseProposalForm
-                lease={lease}
-                updateLease={updateLease}/>,
+                userEntry={userEntry}
+                updateUserEntry={formData => updateUserEntry('formData', formData)}/>,
             primaryBtn: nextBtn, secondaryBtn: backBtn
         },
         {

@@ -6,12 +6,12 @@ import { DropdownMenu } from '../common';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const profileRef = useRef(null);
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
 
-            if (!profileRef.current.contains(event.target) && isMenuOpen) {
+            if (!dropdownRef.current.contains(event.target) && isMenuOpen) {
                 setIsMenuOpen(false); 
             }};
 
@@ -24,15 +24,14 @@ const Header = () => {
     <ul className='header'>
         <li><Link to='/' className='company-logo'>Logo</Link></li>
         <li><Link to='/'>SpotShare</Link></li>
-        <li>
+        <li ref={dropdownRef}>
             <button 
-                ref={profileRef}
                 onClick={toggleMenu}
                 className='profile'>Profile</button>
             <DropdownMenu 
                 items={[
-                    {item:'login', label:'Log In'}, 
-                    {item:'logout', label:'Log Out'}]}
+                    {item:'login', label:'Log In', onClick: toggleMenu}, 
+                    {item:'logout', label:'Log Out', onClick: toggleMenu}]}
                 isVisible={isMenuOpen}/>
         </li>
     </ul>);

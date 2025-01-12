@@ -8,11 +8,12 @@
 
 .page h1 {
     padding-bottom: 20px;
+    text-align: left;
     width: 100%;
 }
 
 @media(min-width: 768px) {
-    .page h1, .page .search-form {
+    .page {
         width: 50%;
     }
 }

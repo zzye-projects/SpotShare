@@ -4,13 +4,13 @@ import {FREQUENCY_CHOICES} from '../../globals';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import './SearchForm.css';
-
-const validationSchema = Yup.object({
-    address: Yup.string().required('Address is required'),
-    maxPrice: Yup.number().min(0, 'Price must be at least 0'),
-  });
+import './forms.css';
   
   const SearchForm = ({onSubmit}) => {
+
+    const validationSchema = Yup.object({
+        address: Yup.string().required('Address is required'),
+        maxPrice: Yup.number().min(0, 'Price must be at least 0')});
     const {addresses, isLoadingAddresses} = useAddresses();
 
     return (
@@ -60,7 +60,7 @@ const validationSchema = Yup.object({
                     label='Per'
                     options={FREQUENCY_CHOICES}/>
                 </div>
-            <div className='form-row'>
+            <div className='form-row form-buttons'>
                 <Button
                     label="Search"
                     isDisabled={isSubmitting || !isValid || !dirty}

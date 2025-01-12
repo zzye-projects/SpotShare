@@ -24,7 +24,7 @@ const ListItem = ({
                 </div>
             </div>
             <div className='list-item-row'>
-                <span className='list-item-dates'>{`${availableStart} - ${availableEnd}`}</span>
+                <span className='list-item-dates'>{`${availableStart} - ${availableEnd? availableEnd: 'No End Date'}`}</span>
                 <span className='list-item-paymentAmount'>{`$${paymentAmount} / ${FREQUENCY_CHOICES[paymentFrequency].formatted}`}</span>
             </div>
         </button>

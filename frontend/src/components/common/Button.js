@@ -1,6 +1,5 @@
 import './Button.css';
-const Button = ({label, onClick, isDisabled=false, className}) => {
-    return (
+const Button = ({label, onClick, isDisabled=false, className}) => (
         <button 
             type='submit'
             onClick={onClick}
@@ -8,7 +7,6 @@ const Button = ({label, onClick, isDisabled=false, className}) => {
             className={`${className} ${isDisabled? 'disabled-button': ''}`}>
             {label}
         </button>
-    )
-}
+    );
 
 export default Button;
